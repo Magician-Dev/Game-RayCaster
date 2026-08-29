@@ -1,6 +1,0 @@
-DOOM/WOLFENSTEIN 3D ENGINE:
-
-raycaster engine
-
-fight aliens? could be hard to draw
-shoot up aliens at an alien base on the moon
