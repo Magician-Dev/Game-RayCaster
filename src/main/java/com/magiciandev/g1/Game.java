@@ -1,109 +1,88 @@
 package com.magiciandev.g1;
 
+import com.magiciandev.g1.gfx.RaycasterProjectionPanel;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
-public class Game extends Canvas implements Runnable{
-    public static final long serialVersionUID = 1L;
+public class Game {
 
-    public static final String NAME = "Untitled game";
-    public static final int HEIGHT = 240;
-    public static final int WIDTH = HEIGHT*4/3;
+    public static final int WIDTH = 640;
+    public static final int HEIGHT = 480;
 
-    private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    private int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-    private boolean running = false;
-    private int tickCount;
+    private final JFrame frame;
 
-    public void start(){
-        running = true;
-        new Thread(this).start();
-    }
+    private final RaycasterPanel RAYCASTER_PANEL;
+    private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
 
-    public void stop(){
-        running = false;
-    }
+    private Timer timer;
 
-    public void run(){
-        long lastTime = System.nanoTime();
-        double unprocessed = 0;
-        double nsPerTick = 1000000000.0 / 35.0;
-        int frames = 0;
-        int ticks = 0;
-        long lastTimer1 = System.currentTimeMillis();
+    public Game() {
 
-        while(running){
-            long now = System.nanoTime();
-            unprocessed += (now-lastTime)/nsPerTick;
-            lastTime = now;
-            boolean shouldRender = true;
-            while(unprocessed>=1) {
-                ticks++;
-                tick();
-                unprocessed--;
-                shouldRender = true;
-            }
-            if(shouldRender){
-                frames++;
-                render();
-            }
+        frame = new JFrame("Raycaster");
 
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
+        RAYCASTER_PANEL = new RaycasterPanel(this);
 
-            if(System.currentTimeMillis()-lastTimer1>1000){
-                lastTimer1 += 1000;
-                System.out.println(ticks + " ticks, " + frames + " fps");
-                frames = 0;
-                ticks = 0;
-            }
-        }
-    }
+        RAYCASTER_PROJ_PANEL =
+                new RaycasterProjectionPanel(
+                        this,
+                        RAYCASTER_PANEL
+                );
 
-    public void tick(){
-        tickCount++;
-    }
+        // Keyboard input goes to the visible panel.
+        RAYCASTER_PROJ_PANEL.addKeyListener(
+                RAYCASTER_PANEL.getCamera().getKeyAdapter()
+        );
+        RAYCASTER_PROJ_PANEL.setFocusable(true);
 
-    public void render(){
-        BufferStrategy bs = getBufferStrategy();
-        if(bs == null){
-            createBufferStrategy(3);
-            return;
-        }
-
-        for(int i=0; i<pixels.length; i++){
-            pixels[i] = i+tickCount;
-        }
-
-        Graphics g = bs.getDrawGraphics();
-        g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-        g.dispose();
-        bs.show();
-    }
-
-    public static void main(String[] args){
-        Game game = new Game();
-        game.setMinimumSize(new Dimension(WIDTH*2, HEIGHT*2));
-        game.setMaximumSize(new Dimension(WIDTH*2, HEIGHT*2));
-        game.setPreferredSize(new Dimension(WIDTH*2, HEIGHT*2));
-
-
-        JFrame frame = new JFrame(Game.NAME);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.add(game);
+
+        // ONLY show the 3D view.
+        frame.add(RAYCASTER_PROJ_PANEL, BorderLayout.CENTER);
+
         frame.pack();
+
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        game.start();
+        SwingUtilities.invokeLater(() ->
+                RAYCASTER_PROJ_PANEL.requestFocusInWindow()
+        );
+    }
+
+    public void start() {
+
+        timer = new Timer(1000 / 60, e -> {
+
+            RAYCASTER_PANEL.update();
+            RAYCASTER_PROJ_PANEL.update();
+
+            RAYCASTER_PROJ_PANEL.repaint();
+        });
+
+        timer.start();
+    }
+
+    public void stop() {
+        if (timer != null) {
+            timer.stop();
+        }
+    }
+
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Game game = new Game();
+            game.start();
+        });
     }
 }
