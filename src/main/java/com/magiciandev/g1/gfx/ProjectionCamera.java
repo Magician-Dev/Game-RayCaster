@@ -1,11 +1,14 @@
 package com.magiciandev.g1.gfx;
 
+import com.magiciandev.g1.Game;
 import com.magiciandev.g1.RaycasterUtils;
 import com.magiciandev.g1.entity.Camera;
 import com.magiciandev.g1.texture.TextureCache;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 
 public class ProjectionCamera {
 
@@ -18,6 +21,8 @@ public class ProjectionCamera {
      * Texture (FPS) to render overtop all other objects.
      */
     private final BufferedImage TEXTURE;
+
+    private BufferedImage overlayTexture;
 
     /**
      * Offset from the top of the image to prevent the image from being fully exposed
@@ -48,6 +53,7 @@ public class ProjectionCamera {
     public ProjectionCamera(final RaycasterProjectionPanel projectionPanel) {
         this.PROJECTION_PANEL = projectionPanel;
         this.TEXTURE = TextureCache.getImage("fist_1.png");
+        //this.OVERLAY_TEXTURE = TextureCache.getImage("blackblizzardbig.png");
     }
 
     public void draw(final Graphics2D g2) {
@@ -61,6 +67,29 @@ public class ProjectionCamera {
         g2.drawImage(this.TEXTURE, (int) (x + cx),
                 this.OSCILLATION_Y_OFFSET + (int) (y + this.PROJECTION_PANEL.getPreferredSize().height - h),
                 (int) w, (int) h, null);
+
+        switch(Game.precipitationCount){
+            case 1:
+                overlayTexture = TextureCache.getImage("blackblizzardbig.png");
+                break;
+            case 2:
+                overlayTexture = TextureCache.getImage("blackblizzardbig1.png");
+                break;
+            case 3:
+                overlayTexture = TextureCache.getImage("blackblizzardbig2.png");
+                break;
+            case 4:
+                overlayTexture = TextureCache.getImage("blackblizzardbig3.png");
+                break;
+            default:
+                overlayTexture = null;
+                break;
+        }
+
+        //draw screen overlay (overlays should be passed in as 320x240 sprites)
+        if(overlayTexture != null){
+            g2.drawImage(overlayTexture, 0, 0, 640, 480, null);
+        }
     }
 
     private double getOscillationSpeed() {

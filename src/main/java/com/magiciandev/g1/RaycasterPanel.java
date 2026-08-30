@@ -35,7 +35,7 @@ public final class RaycasterPanel extends JPanel {
         RESOLUTION = getPreferredSize().width;
 
         this.RAY_LIST = new Ray[this.RESOLUTION];
-        this.MAP = new TileMap("map2.dat");
+        this.MAP = new TileMap("map3.dat");
 
         this.CAMERA = new Camera(this, 400, 225);
 
@@ -47,8 +47,12 @@ public final class RaycasterPanel extends JPanel {
     }
 
     public void update() {
+        double oldX = this.CAMERA.getX();
+        double oldY = this.CAMERA.getY();
+
         this.CAMERA.update();
-        this.updateCollisions();
+        this.updateCollisions(oldX, oldY);
+
         this.updateSpriteDistances();
         this.computeRays();
     }
@@ -123,12 +127,18 @@ public final class RaycasterPanel extends JPanel {
         this.MAP.getSprites().sort(new TextureSprite.TextureSpriteComparator());
     }
 
-    private void updateCollisions() {
+    private void updateCollisions(double oldX, double oldY) {
         Rectangle2D.Double cbb = this.CAMERA.getBoundingBox();
+
         for (CollidableEntity2D ce2d : this.MAP.getEntities()) {
-            // For now just assume that all are collidable.
             if (cbb.intersects(ce2d.getBoundingBox())) {
+
+                this.CAMERA.setX(oldX);
+                this.CAMERA.setY(oldY);
+
                 this.CAMERA.stopMoving();
+
+                return;
             }
         }
     }

@@ -20,15 +20,21 @@ public final class Camera {
     private final double DISTANCE_TO_PROJECTION_PLANE;
     private final int WIDTH = 20;
     private final int HEIGHT = 20;
-    private final double DEFAULT_WALK_SPEED = 1.5;
-    private final double DEFAULT_RUN_SPEED = 3;
-    private final double DEFAULT_TURN_SPEED = 3;
+    public final double DEFAULT_WALK_SPEED = 1.5;
+    public final double DEFAULT_RUN_SPEED = 3;
+    public final double DEFAULT_TURN_SPEED = 3;
     private double x;
     private double y;
     private double fovDelta;
-    private double speed;
+    public double speed;
     private double currentAngle;
     private int currentState;
+
+    public static boolean pressingW = false;
+    public static boolean pressingS = false;
+    public static boolean pressingA = false;
+    public static boolean pressingD = false;
+    public static boolean pressingShift = false;
 
     public Camera(final RaycasterPanel raycasterPanel, final double x, final double y){
         this.x = x;
@@ -182,22 +188,27 @@ public final class Camera {
                 if (this.PRESSED_KEYS.contains(KeyEvent.VK_SHIFT)) {
                     this.CAMERA.currentState |= CameraState.RUN_FORWARD;
                     this.CAMERA.speed = this.CAMERA.DEFAULT_RUN_SPEED;
+                    pressingShift = true;
                 } else {
                     this.CAMERA.speed = this.CAMERA.DEFAULT_WALK_SPEED;
                 }
+                pressingW = true;
             } else if (e.getKeyCode() == KeyEvent.VK_S) {
                 // Walking backwards...
                 this.CAMERA.currentState |= CameraState.WALK_BACKWARD;
                 this.CAMERA.speed = -this.CAMERA.DEFAULT_WALK_SPEED;
+                pressingS = true;
             }
 
             // Turning.
             if (e.getKeyCode() == KeyEvent.VK_A) {
                 this.CAMERA.currentState |= CameraState.TURN_LEFT;
                 this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_SPEED);
+                pressingA = true;
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
                 this.CAMERA.currentState |= CameraState.TURN_RIGHT;
                 this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_SPEED);
+                pressingD = true;
             }
         }
 
@@ -207,6 +218,7 @@ public final class Camera {
             if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                 this.CAMERA.currentState &= ~CameraState.RUN_FORWARD;
                 this.CAMERA.speed = this.CAMERA.DEFAULT_WALK_SPEED;
+                pressingShift = false;
             }
 
             if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_S) {
@@ -214,8 +226,18 @@ public final class Camera {
                 this.CAMERA.speed = 0;
             }
 
+            if(e.getKeyCode() == KeyEvent.VK_W){
+                pressingW = false;
+            }
+
+            if(e.getKeyCode() == KeyEvent.VK_S){
+                pressingS = false;
+            }
+
             if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_D) {
                 this.CAMERA.currentState &= ~(CameraState.TURN_LEFT | CameraState.TURN_RIGHT);
+                pressingA = false;
+                pressingD = false;
             }
         }
     }

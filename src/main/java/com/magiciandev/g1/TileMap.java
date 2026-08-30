@@ -81,7 +81,7 @@ public class TileMap {
                             break;
                         }
                         case 'S': {
-                            this.SPRITES.add(new TextureSprite(x, y, TILE_SIZE, TILE_SIZE, "monster.png"));
+                            this.SPRITES.add(new TextureSprite(x, y, TILE_SIZE, TILE_SIZE, "tree_2_tall.png"));
                             break;
                         }
                     }

@@ -1,5 +1,6 @@
 package com.magiciandev.g1.gfx;
 
+import com.magiciandev.g1.Game;
 import com.magiciandev.g1.texture.TextureCache;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
     /**
      * Image projected onto the ceiling.
      */
-    private final BufferedImage CEILING_TEXTURE;
+    private BufferedImage ceiling_texture;
 
     /**
      * Pixel data of the ceiling drawn on the current frame.
@@ -36,7 +37,21 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
     public ProjectionCeiling(final RaycasterProjectionPanel projectionPanel) {
         super(0, 0, projectionPanel.getPreferredSize().width, projectionPanel.getPreferredSize().height / 2.f);
         this.PROJECTION_PANEL = projectionPanel;
-        this.CEILING_TEXTURE = TextureCache.getImage("stonebrick.png");
+        switch(Game.level){
+            case 0:
+                this.ceiling_texture = TextureCache.getImage("blue_sky.png");
+                break;
+            case 1:
+                this.ceiling_texture = TextureCache.getImage("stonebrick.png");
+                break;
+            case 2:
+                this.ceiling_texture = TextureCache.getImage("gray_sky.png");
+                break;
+            default:
+                this.ceiling_texture = TextureCache.getImage("stonebrick.png");
+                break;
+        }
+
         this.CEILING_BUFFER = new BufferedImage(projectionPanel.getPreferredSize().width, projectionPanel.getPreferredSize().height / 2, BufferedImage.TYPE_INT_RGB);
     }
 
@@ -47,10 +62,13 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
             g2.setColor(this.CEILING_COLOR);
             g2.fillRect(0, 0, this.PROJECTION_PANEL.getPreferredSize().width, this.PROJECTION_PANEL.getPreferredSize().height);
         }
+        if(Game.lightning){
+            this.ceiling_texture = TextureCache.getImage("blue_sky.png");
+        }
     }
 
     public void setPixel(final int dx, final int dy, final int sx, final int sy) {
-        this.CEILING_BUFFER.setRGB(dx, dy, this.CEILING_TEXTURE.getRGB(sx, sy));
+        this.CEILING_BUFFER.setRGB(dx, dy, this.ceiling_texture.getRGB(sx, sy));
     }
 
     public boolean isTexturedCeiling() {

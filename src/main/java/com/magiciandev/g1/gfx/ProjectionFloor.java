@@ -1,7 +1,9 @@
 package com.magiciandev.g1.gfx;
 
+import com.magiciandev.g1.Game;
 import com.magiciandev.g1.texture.TextureCache;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -36,7 +38,20 @@ public final class ProjectionFloor extends Rectangle2D.Double {
     public ProjectionFloor(final RaycasterProjectionPanel projectionPanel) {
         super(0, projectionPanel.getPreferredSize().height / 2.f, projectionPanel.getPreferredSize().width, projectionPanel.getPreferredSize().height);
         this.PROJECTION_PANEL = projectionPanel;
-        this.FLOOR_TEXTURE = TextureCache.getImage("floor_2.png");
+        switch(Game.level){
+            case 0:
+                this.FLOOR_TEXTURE = TextureCache.getImage("floor.png");
+                break;
+            case 1:
+                this.FLOOR_TEXTURE = TextureCache.getImage("floor_2.png");
+                break;
+            case 2:
+                this.FLOOR_TEXTURE = TextureCache.getImage("darkened_floor.png");
+                break;
+            default:
+                this.FLOOR_TEXTURE = TextureCache.getImage("floor_2.png");
+        }
+
         this.FLOOR_BUFFER = new BufferedImage(projectionPanel.getPreferredSize().width, projectionPanel.getPreferredSize().height / 2, BufferedImage.TYPE_INT_RGB);
     }
 

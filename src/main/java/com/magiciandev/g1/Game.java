@@ -4,8 +4,15 @@ import com.magiciandev.g1.gfx.RaycasterProjectionPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Game {
+    public static int level = 2;
+    public static boolean precipitationLevel = false;
+    public static boolean lightning = true;
+    public static double x_offset = 0;
+    public static double y_offset = 0;
 
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
@@ -15,7 +22,10 @@ public class Game {
     private final RaycasterPanel RAYCASTER_PANEL;
     private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
 
-    private Timer timer;
+    private static Timer timer;
+    public static Timer renderTimer;
+
+    public static int precipitationCount = 0;
 
     public Game() {
 
@@ -59,15 +69,29 @@ public class Game {
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();
 
+            switch(level){
+                case 0:
+                    x_offset += 0.4;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        renderTimer = new Timer(1000/60, e -> {
             RAYCASTER_PROJ_PANEL.repaint();
         });
 
         timer.start();
+        renderTimer.start();
     }
 
     public void stop() {
         if (timer != null) {
             timer.stop();
+        }
+        if (renderTimer != null){
+            renderTimer.stop();
         }
     }
 
@@ -84,5 +108,12 @@ public class Game {
             Game game = new Game();
             game.start();
         });
+
+        if(level == 2){
+            precipitationLevel = true;
+        }
+
+        Timers timers = new Timers();
+        timers.start();
     }
 }

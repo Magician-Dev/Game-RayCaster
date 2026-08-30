@@ -105,6 +105,8 @@ public class RaycasterProjectionPanel extends JPanel {
                 this.getHeight()
         );
 
+
+
         this.PROJECTION_CEILING.draw(g2d);
         this.PROJECTION_FLOOR.draw(g2d);
 
@@ -187,10 +189,11 @@ public class RaycasterProjectionPanel extends JPanel {
     private void projectFloorCeiling(final Ray ray, final double wallX, final double wallY, final double wallHeight) {
         // Yes, this is a little ugly, but it works rather well.
         if (this.PROJECTION_CEILING.isTexturedCeiling() || this.PROJECTION_FLOOR.isTexturedFloor()) {
-            final double TEXTURE_SCALE = 64;
+            final double TEXTURE_SCALE = 32;
             final double CAMERA_HEIGHT = 32;
             final int TEXTURE_SIZE = 64;
-            final double CAMERA_X = this.RAYCASTER_PANEL.getCamera().getX();
+            final double CAMERA_X = this.RAYCASTER_PANEL.getCamera().getX()+Game.x_offset;
+            final double CAMERA_X_UNMOD = this.RAYCASTER_PANEL.getCamera().getX();
             final double CAMERA_Y = this.RAYCASTER_PANEL.getCamera().getY();
             final double DTPP = this.RAYCASTER_PANEL.getCamera().getDistanceToProjectionPlane();
             final double ANGLE = RaycasterUtils.cos(Math.toRadians(this.RAYCASTER_PANEL.getCamera().getCurrentAngle() - ray.getAngle()));
@@ -202,11 +205,13 @@ public class RaycasterProjectionPanel extends JPanel {
                 double r = y - this.getPreferredSize().height / 2.f;
                 double d = (CAMERA_HEIGHT * DTPP / r) / ANGLE;
                 double tileX = CAMERA_X + d * RAY_COSANGLE;
+                double tileXUnmod = CAMERA_X_UNMOD + d * RAY_COSANGLE;
                 double tileY = CAMERA_Y + d * RAY_SINANGLE;
                 int textureX = Math.floorMod((int) (tileX * TEXTURE_SIZE / TEXTURE_SCALE), TEXTURE_SIZE);
+                int textureXUnmod = Math.floorMod((int) (tileXUnmod * TEXTURE_SIZE / TEXTURE_SCALE), TEXTURE_SIZE);
                 int textureY = Math.floorMod((int) (tileY * TEXTURE_SIZE / TEXTURE_SCALE), TEXTURE_SIZE);
                 if (this.PROJECTION_FLOOR.isTexturedFloor()) {
-                    this.PROJECTION_FLOOR.setPixel((int) wallX, y - this.getPreferredSize().height / 2, textureX, textureY);
+                    this.PROJECTION_FLOOR.setPixel((int) wallX, y - this.getPreferredSize().height / 2, textureXUnmod, textureY);
                 }
                 if (this.PROJECTION_CEILING.isTexturedCeiling()) {
                     this.PROJECTION_CEILING.setPixel((int) wallX, this.getPreferredSize().height - y, textureX, textureY);
@@ -258,7 +263,17 @@ public class RaycasterProjectionPanel extends JPanel {
                 }
                 for (int j = 0; j < sprite_screen_size; j++) {
                     if (v_offset + j < 0 || v_offset + j >= PROJ_HEIGHT) { continue; }
-                    int color = sp.getTexture().getRGB((int) (i * sp.getWidth() / sprite_screen_size), (int) (j * sp.getHeight() / sprite_screen_size));
+                    //int color = sp.getTexture().getRGB((int) (i * sp.getWidth() / sprite_screen_size), (int) (j * sp.getHeight() / sprite_screen_size));
+                    BufferedImage texture = sp.getTexture();
+
+                    int textureX = (int) (i * texture.getWidth() / sprite_screen_size);
+                    int textureY = (int) (j * texture.getHeight() / sprite_screen_size);
+
+                    textureX = Math.min(textureX, texture.getWidth() - 1);
+                    textureY = Math.min(textureY, texture.getHeight() - 1);
+
+                    int color = texture.getRGB(textureX, textureY);
+
                     if (color != ProjectionSprite.TEXTURE_BG_COLOR) {
                         this.PROJECTION_SPRITE.setPixel(screenX, v_offset + j, color);
                     }
