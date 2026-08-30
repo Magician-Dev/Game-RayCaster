@@ -8,7 +8,7 @@ public abstract class LivingEntity extends TextureSprite {
 
     public LivingEntity(double x, double y, double w, double h, String fileName, double speedFactor) {
         super(x, y, w, h, fileName);
-        speedFactor = this.speedFactor;
+        this.speedFactor = speedFactor;
     }
 
     public abstract void tick();
