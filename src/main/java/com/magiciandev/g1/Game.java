@@ -10,7 +10,8 @@ import java.awt.event.ActionListener;
 public class Game {
     public static int level = 2;
     public static boolean precipitationLevel = false;
-    public static boolean lightning = true;
+    public static boolean lightning = false;
+    public static boolean strongLightning = false;
     public static double x_offset = 0;
     public static double y_offset = 0;
 
@@ -26,6 +27,8 @@ public class Game {
     public static Timer renderTimer;
 
     public static int precipitationCount = 0;
+    public static int lightningRandom = 0;
+    public static int lightningRandomCount = 0;
 
     public Game() {
 

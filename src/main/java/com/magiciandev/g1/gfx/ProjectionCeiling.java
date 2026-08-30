@@ -24,6 +24,8 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
      */
     private BufferedImage ceiling_texture;
 
+    private BufferedImage ceiling_texture_og;
+
     /**
      * Pixel data of the ceiling drawn on the current frame.
      */
@@ -40,15 +42,19 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
         switch(Game.level){
             case 0:
                 this.ceiling_texture = TextureCache.getImage("blue_sky.png");
+                this.ceiling_texture_og = TextureCache.getImage("blue_sky.png");
                 break;
             case 1:
                 this.ceiling_texture = TextureCache.getImage("stonebrick.png");
+                this.ceiling_texture_og = TextureCache.getImage("stonebrick.png");
                 break;
             case 2:
                 this.ceiling_texture = TextureCache.getImage("gray_sky.png");
+                this.ceiling_texture_og = TextureCache.getImage("gray_sky.png");
                 break;
             default:
                 this.ceiling_texture = TextureCache.getImage("stonebrick.png");
+                this.ceiling_texture_og = TextureCache.getImage("stonebrick.png");
                 break;
         }
 
@@ -62,8 +68,14 @@ public final class ProjectionCeiling extends Rectangle2D.Double {
             g2.setColor(this.CEILING_COLOR);
             g2.fillRect(0, 0, this.PROJECTION_PANEL.getPreferredSize().width, this.PROJECTION_PANEL.getPreferredSize().height);
         }
+
+        if(Game.strongLightning){
+            this.ceiling_texture = TextureCache.getImage("lightning_sky_strong.png");
+        }else
         if(Game.lightning){
-            this.ceiling_texture = TextureCache.getImage("blue_sky.png");
+            this.ceiling_texture = TextureCache.getImage("lightning_sky_soft.png");
+        }else{
+            this.ceiling_texture = this.ceiling_texture_og;
         }
     }
 
