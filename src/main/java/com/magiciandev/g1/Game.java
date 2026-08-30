@@ -1,11 +1,14 @@
 package com.magiciandev.g1;
 
+import com.magiciandev.g1.entity.livingentity.LivingEntity;
+import com.magiciandev.g1.entity.livingentity.Monster;
 import com.magiciandev.g1.gfx.RaycasterProjectionPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Game {
     public static int level = 2;
@@ -22,9 +25,14 @@ public class Game {
 
     private final RaycasterPanel RAYCASTER_PANEL;
     private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
+    private TileMap tileMap;
+    private ArrayList<LivingEntity> livingEntities;
 
     private static Timer timer;
     public static Timer renderTimer;
+
+    public static double cameraX;
+    public static double cameraY;
 
     public static int precipitationCount = 0;
     public static int lightningRandom = 0;
@@ -78,6 +86,14 @@ public class Game {
                     break;
                 default:
                     break;
+            }
+
+            TileMap tileMap = new TileMap("map3.dat");
+            ArrayList<LivingEntity> livingEntities = new ArrayList<>();
+            livingEntities = tileMap.getLivingEntities();
+
+            for (LivingEntity entity : livingEntities) {
+                entity.tick();
             }
         });
 

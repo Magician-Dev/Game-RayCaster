@@ -1,6 +1,8 @@
 package com.magiciandev.g1;
 
 import com.magiciandev.g1.entity.CollidableEntity2D;
+import com.magiciandev.g1.entity.livingentity.LivingEntity;
+import com.magiciandev.g1.entity.livingentity.Monster;
 import com.magiciandev.g1.texture.TextureCircleObject2D;
 import com.magiciandev.g1.texture.TextureRectangleObject2D;
 import com.magiciandev.g1.texture.TextureSprite;
@@ -20,7 +22,7 @@ public class TileMap {
     private static final int TILE_SIZE = 64;
 
     /**
-     * List of collildable entities in our world.
+     * List of collidable entities in our world.
      */
     private final ArrayList<CollidableEntity2D> ENTITIES;
 
@@ -29,9 +31,16 @@ public class TileMap {
      */
     private final ArrayList<TextureSprite> SPRITES;
 
+    /**
+     * Array which stores all living entities
+     */
+    public final ArrayList<LivingEntity> LIVING_ENTITIES;
+
+
     public TileMap(final String mapFile) {
         this.ENTITIES = new ArrayList<>();
         this.SPRITES = new ArrayList<>();
+        this.LIVING_ENTITIES = new ArrayList<>();
         this.parseFile(mapFile);
     }
 
@@ -84,6 +93,10 @@ public class TileMap {
                             this.SPRITES.add(new TextureSprite(x, y, TILE_SIZE, TILE_SIZE, "tree_2_tall.png"));
                             break;
                         }
+                        case 'M': {
+                            this.SPRITES.add(new Monster(x, y, TILE_SIZE, TILE_SIZE, 1));
+                            break;
+                        }
                     }
                     x += TILE_SIZE;
                 }
@@ -91,6 +104,7 @@ public class TileMap {
                 y += TILE_SIZE;
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -106,5 +120,9 @@ public class TileMap {
 
     public ArrayList<TextureSprite> getSprites() {
         return this.SPRITES;
+    }
+
+    public ArrayList<LivingEntity> getLivingEntities(){
+        return this.LIVING_ENTITIES;
     }
 }

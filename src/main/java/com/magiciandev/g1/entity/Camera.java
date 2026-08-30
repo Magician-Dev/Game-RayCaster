@@ -57,6 +57,9 @@ public final class Camera {
         // Check to make sure angle is still in bounds
         if (this.currentAngle >= 360) this.currentAngle-=360;
         if (this.currentAngle < 0) this.currentAngle+=360;
+
+        Game.cameraX = getX();
+        Game.cameraY = getY();
     }
 
     public void draw(final Graphics2D g2) {
