@@ -21,7 +21,17 @@ public class Monster extends LivingEntity{
     @Override
     public void tick() {
         //wip
-        this.setX(Game.cameraX-10);
-        this.setX(Game.cameraY-10);
+        this.setX(Game.cameraX+40);
+        this.setY(Game.cameraY+40);
+        this.setY(225);
+        //System.out.println("camerax: " + Game.cameraX);
+        //System.out.println("cameray: " + Game.cameraY);
+        System.out.println("x: " + this.getX());
+        System.out.println("y: " + this.getY());
+    }
+
+    @Override
+    public BufferedImage getTexture(){
+        return this.TEXTURE;
     }
 }

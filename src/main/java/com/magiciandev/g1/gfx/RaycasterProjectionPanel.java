@@ -5,6 +5,7 @@ import com.magiciandev.g1.Ray;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
 import com.magiciandev.g1.entity.Camera;
+import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.texture.TextureSprite;
 
 import javax.swing.*;
@@ -279,6 +280,7 @@ public class RaycasterProjectionPanel extends JPanel {
                     }
                 }
             }
+            //System.out.println("Number of sprites: " + sprites.size());
         }
 
         this.PROJECTION_SPRITE.draw(g2);

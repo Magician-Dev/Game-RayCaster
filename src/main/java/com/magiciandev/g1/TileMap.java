@@ -94,7 +94,12 @@ public class TileMap {
                             break;
                         }
                         case 'M': {
-                            this.SPRITES.add(new Monster(x, y, TILE_SIZE, TILE_SIZE, 1));
+                            Monster monster = new Monster(x, y, TILE_SIZE, TILE_SIZE, 1);
+
+                            this.LIVING_ENTITIES.add(monster);
+                            this.SPRITES.add(monster);
+
+                            System.out.println("ADDED");
                             break;
                         }
                     }
@@ -108,6 +113,7 @@ public class TileMap {
             throw new RuntimeException(e);
         }
     }
+
 
     public void draw(final Graphics2D g2) {
         this.ENTITIES.forEach(entity -> entity.draw(g2));
@@ -123,6 +129,7 @@ public class TileMap {
     }
 
     public ArrayList<LivingEntity> getLivingEntities(){
+        System.out.println("entities: " + this.LIVING_ENTITIES);
         return this.LIVING_ENTITIES;
     }
 }

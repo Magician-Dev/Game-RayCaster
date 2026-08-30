@@ -4,6 +4,8 @@ import com.magiciandev.g1.entity.Camera;
 import com.magiciandev.g1.entity.CollidableEntity2D;
 import com.magiciandev.g1.entity.EntityData;
 import com.magiciandev.g1.entity.IntersectionDataPair;
+import com.magiciandev.g1.entity.livingentity.LivingEntity;
+import com.magiciandev.g1.entity.livingentity.Monster;
 import com.magiciandev.g1.texture.TextureSprite;
 
 import javax.swing.*;
@@ -23,7 +25,7 @@ public final class RaycasterPanel extends JPanel {
     private final Ray[] RAY_LIST;
     private final int RESOLUTION;
 
-    public RaycasterPanel(final Game game) {
+    public RaycasterPanel(final Game game, final TileMap map) {
         this.RUNNER = game;
 
         // This panel is hidden, so its physical size doesn't matter.
@@ -35,7 +37,7 @@ public final class RaycasterPanel extends JPanel {
         RESOLUTION = getPreferredSize().width;
 
         this.RAY_LIST = new Ray[this.RESOLUTION];
-        this.MAP = new TileMap("map3.dat");
+        this.MAP = map;//new TileMap("map3.dat");
 
         this.CAMERA = new Camera(this, 400, 225);
 

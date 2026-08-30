@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Game {
-    public static int level = 2;
+    public static int level = 0;
     public static boolean precipitationLevel = false;
     public static boolean lightning = false;
     public static boolean strongLightning = false;
@@ -25,8 +25,9 @@ public class Game {
 
     private final RaycasterPanel RAYCASTER_PANEL;
     private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
-    private TileMap tileMap;
-    private ArrayList<LivingEntity> livingEntities;
+    private final TileMap tileMap;
+    private final ArrayList<LivingEntity> livingEntities;
+
 
     private static Timer timer;
     public static Timer renderTimer;
@@ -42,7 +43,10 @@ public class Game {
 
         frame = new JFrame("Raycaster");
 
-        RAYCASTER_PANEL = new RaycasterPanel(this);
+        this.tileMap = new TileMap("map3.dat");
+        this.livingEntities = tileMap.getLivingEntities();
+
+        RAYCASTER_PANEL = new RaycasterPanel(this, tileMap);
 
         RAYCASTER_PROJ_PANEL =
                 new RaycasterProjectionPanel(
@@ -54,12 +58,16 @@ public class Game {
         RAYCASTER_PROJ_PANEL.addKeyListener(
                 RAYCASTER_PANEL.getCamera().getKeyAdapter()
         );
+
+        //this.tileMap = new TileMap("map3.dat");
+        //ArrayList<LivingEntity> livingEntities = tileMap.getLivingEntities();
+
+       // this.livingEntities = livingEntities;
+
         RAYCASTER_PROJ_PANEL.setFocusable(true);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-
-        // ONLY show the 3D view.
         frame.add(RAYCASTER_PROJ_PANEL, BorderLayout.CENTER);
 
         frame.pack();
@@ -77,6 +85,12 @@ public class Game {
 
         timer = new Timer(1000 / 60, e -> {
 
+            // Move/update entities FIRST
+            for (LivingEntity entity : livingEntities) {
+                entity.tick();
+            }
+
+            // Then update camera, sprite distances, and rays
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();
 
@@ -86,14 +100,6 @@ public class Game {
                     break;
                 default:
                     break;
-            }
-
-            TileMap tileMap = new TileMap("map3.dat");
-            ArrayList<LivingEntity> livingEntities = new ArrayList<>();
-            livingEntities = tileMap.getLivingEntities();
-
-            for (LivingEntity entity : livingEntities) {
-                entity.tick();
             }
         });
 
