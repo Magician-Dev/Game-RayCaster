@@ -217,11 +217,11 @@ public class TileMap {
 
                         case 'M': {
 
-                            Monster monster = new Monster(x, y, TILE_SIZE, TILE_SIZE, 1, this);
+                            /*Monster monster = new Monster(x, y, TILE_SIZE, TILE_SIZE, 1, this);
                             this.LIVING_ENTITIES.add(monster);
                             this.SPRITES.add(monster);
                             System.out.println("ADDED");
-                            break;
+                            break;*/
                         }
                     }
                 }

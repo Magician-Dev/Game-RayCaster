@@ -12,7 +12,7 @@ import java.util.List;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 
-public class Monster extends LivingEntity{
+public abstract class Monster extends LivingEntity{
 
     private String fileName;
     private BufferedImage TEXTURE;
@@ -116,13 +116,6 @@ public class Monster extends LivingEntity{
         double dx = targetX - getX();
         double dy = targetY - getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
-
-        /*if (distanceToPlayer < 64.0) {
-            pathIndex++;
-            System.out.println("should despawn");
-            despawn();
-            return;
-        }*/
 
         if (distance <= speedFactor) {
             setX(targetX);

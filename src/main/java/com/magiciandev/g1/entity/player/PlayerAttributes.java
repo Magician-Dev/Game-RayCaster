@@ -16,7 +16,7 @@ public class PlayerAttributes {
     public static String weapons[] = {
             "FIST", "KNIFE", "PISTOL9MM", "REVOLVER", "MACHINEGUN", "SNIPERRIFLE"
     };
-    public static String currentWeapon = weapons[0];
+    public static String currentWeapon = weapons[2];
 
     public static final int DEFAULT_MELEE_COOLDOWN = 60;
 

@@ -4,6 +4,7 @@ import com.magiciandev.g1.Game;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
+import com.magiciandev.g1.entity.player.PlayerAttributes;
 import com.magiciandev.g1.entity.player.PlayerMethods;
 //import com.sun.istack.internal.Nullable;
 
@@ -23,18 +24,22 @@ public final class Camera {
     private final double DISTANCE_TO_PROJECTION_PLANE;
     private final int WIDTH = 20;
     private final int HEIGHT = 20;
-    public final double DEFAULT_WALK_SPEED = 1.5;
-    public final double DEFAULT_RUN_SPEED = 3;
-    public final double DEFAULT_TURN_SPEED = 3;
+    public final double DEFAULT_WALK_SPEED = 2;
+    public final double DEFAULT_RUN_SPEED = 4;
+    public final double DEFAULT_TURN_SPEED = 5;
     private double x;
     private double y;
     private double fovDelta;
     public double speed;
     private double currentAngle;
     private int currentState;
+    public boolean toAttack = false;
+    public double distanceToMeleeTarget = 0.0;
 
     private static final double MELEE_RANGE = 100.0;
     private static final double MELEE_ANGLE = 30.0;
+    private static final double RANGED_RANGE = 12300.0;
+    private static final double RANGED_ANGLE = 15.0;
 
     public static boolean pressingW = false;
     public static boolean pressingS = false;
@@ -43,6 +48,7 @@ public final class Camera {
     public static boolean pressingShift = false;
 
     public LivingEntity meleeTarget;
+    public LivingEntity rangedTarget;
 
     public Camera(final RaycasterPanel raycasterPanel, final double x, final double y){
         this.x = x;
@@ -70,6 +76,17 @@ public final class Camera {
         Game.cameraY = getY();
 
         this.meleeTarget = this.findMeleeTarget();
+        this.rangedTarget = this.findRangedTarget();
+
+        if (meleeTarget != null) {
+            double dxt = meleeTarget.getX() - getX();
+            double dyt = meleeTarget.getY() - getY();
+
+            distanceToMeleeTarget = Math.sqrt(dxt * dxt + dyt * dyt);
+        } else {
+            distanceToMeleeTarget = Double.MAX_VALUE;
+        }
+
         //System.out.println("meleetarget: " + meleeTarget);
     }
 
@@ -96,6 +113,41 @@ public final class Camera {
 
             double dx = entity.getX() - this.x;
             double dy = entity.getY() - this.y;
+            double distanceSquared = dx * dx + dy * dy;
+            if (distanceSquared > closestDistanceSquared) {
+                continue;
+            }
+
+            double angleToEntity = Math.toDegrees(Math.atan2(dy, dx));
+            if (angleToEntity < 0) {
+                angleToEntity += 360;
+            }
+            double angleDifference = Math.abs(angleToEntity - this.currentAngle);
+            if (angleDifference > 180) {
+                angleDifference = 360 - angleDifference;
+            }
+            if (angleDifference > MELEE_ANGLE) {
+                continue;
+            }
+            closestDistanceSquared = distanceSquared;
+            closest = entity;
+        }
+        return closest;
+    }
+
+    private LivingEntity findRangedTarget() {
+        LivingEntity closest = null;
+
+        double closestDistanceSquared = RANGED_RANGE * RANGED_RANGE;
+
+        for (LivingEntity entity : this.RAYCASTER_PANEL.getTileMap().getLivingEntities()) {
+
+            if (entity.health <= 0) {
+                continue;
+            }
+
+            double dx = entity.getX() - this.x;
+            double dy = entity.getY() - this.y;
 
             double distanceSquared = dx * dx + dy * dy;
 
@@ -117,7 +169,7 @@ public final class Camera {
                 angleDifference = 360 - angleDifference;
             }
 
-            if (angleDifference > MELEE_ANGLE) {
+            if (angleDifference > RANGED_ANGLE) {
                 continue;
             }
 
@@ -131,14 +183,21 @@ public final class Camera {
     public LivingEntity getMeleeTarget() {
         return this.meleeTarget;
     }
+    public LivingEntity getRangedTarget() {
+        return this.rangedTarget;
+    }
 
 
     public Rectangle2D.Double getBoundingBox() {
         return new Rectangle2D.Double(this.getX() - 10, this.getY() - 5, this.getWidth() - 10, this.getHeight() - 10);
     }
 
-    public void attack(LivingEntity meleeTarget){
+    public void attackMelee(LivingEntity meleeTarget){
         PlayerMethods.playerAttackMelee(meleeTarget);
+    }
+
+    public void attackRanged(LivingEntity rangedTarget){
+        PlayerMethods.playerAttackRanged(rangedTarget);
     }
 
     public int getWidth() {
@@ -215,6 +274,14 @@ public final class Camera {
                 || CameraState.isFlagEnabled(this.currentState, CameraState.TURN_RIGHT);
     }
 
+    public void attemptAttack(LivingEntity meleeTarget, LivingEntity rangedTarget) {
+        if (PlayerAttributes.rangedDamage > 0 && rangedTarget != null) {
+            attackRanged(rangedTarget);
+        } else if (meleeTarget != null) {
+            attackMelee(meleeTarget);
+        }
+    }
+
     public double getDistanceToProjectionPlane() {
         return this.DISTANCE_TO_PROJECTION_PLANE;
     }
@@ -238,12 +305,9 @@ public final class Camera {
          */
         private final Set<Integer> PRESSED_KEYS;
 
-        private LivingEntity meleeTarget;
-
         public CameraKeyAdapter(final Camera camera) {
             this.CAMERA = camera;
             this.PRESSED_KEYS = new HashSet<>();
-            meleeTarget = camera.getMeleeTarget();
         }
 
         @Override
@@ -267,20 +331,26 @@ public final class Camera {
                 pressingS = true;
             }
 
-            meleeTarget = CAMERA.getMeleeTarget();
-
             if (e.getKeyCode() == KeyEvent.VK_A) {
                 this.CAMERA.currentState |= CameraState.TURN_LEFT;
-                this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_SPEED);
+                if(CAMERA.isRunning()){
+                    this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_SPEED);
+                }else{
+                    this.CAMERA.setFovDelta(-(this.CAMERA.DEFAULT_TURN_SPEED*0.6));
+                }
                 pressingA = true;
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
                 this.CAMERA.currentState |= CameraState.TURN_RIGHT;
-                this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_SPEED);
+                if(CAMERA.isRunning()){
+                    this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_SPEED);
+                }else{
+                    this.CAMERA.setFovDelta((this.CAMERA.DEFAULT_TURN_SPEED*0.6));
+                }
                 pressingD = true;
             }
 
-            if(e.getKeyCode() == KeyEvent.VK_SPACE){
-                CAMERA.attack(meleeTarget);
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                CAMERA.attemptAttack(CAMERA.getMeleeTarget(), CAMERA.getRangedTarget());
             }
         }
 
