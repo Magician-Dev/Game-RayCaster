@@ -47,23 +47,8 @@ public class Game {
         this.livingEntities = tileMap.getLivingEntities();
 
         RAYCASTER_PANEL = new RaycasterPanel(this, tileMap);
-
-        RAYCASTER_PROJ_PANEL =
-                new RaycasterProjectionPanel(
-                        this,
-                        RAYCASTER_PANEL
-                );
-
-        // Keyboard input goes to the visible panel.
-        RAYCASTER_PROJ_PANEL.addKeyListener(
-                RAYCASTER_PANEL.getCamera().getKeyAdapter()
-        );
-
-        //this.tileMap = new TileMap("map3.dat");
-        //ArrayList<LivingEntity> livingEntities = tileMap.getLivingEntities();
-
-       // this.livingEntities = livingEntities;
-
+        RAYCASTER_PROJ_PANEL = new RaycasterProjectionPanel(this, RAYCASTER_PANEL);
+        RAYCASTER_PROJ_PANEL.addKeyListener(RAYCASTER_PANEL.getCamera().getKeyAdapter());
         RAYCASTER_PROJ_PANEL.setFocusable(true);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,12 +70,12 @@ public class Game {
 
         timer = new Timer(1000 / 60, e -> {
 
-            // Move/update entities FIRST
             for (LivingEntity entity : livingEntities) {
                 entity.tick();
             }
 
-            // Then update camera, sprite distances, and rays
+            livingEntities.removeIf(LivingEntity::isToDespawn);
+
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();
 

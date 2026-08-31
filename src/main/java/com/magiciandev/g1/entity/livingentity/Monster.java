@@ -39,42 +39,23 @@ public class Monster extends LivingEntity{
 
     private void updatePathIfNeeded() {
 
-        int playerTileX =
-                (int) Math.floor(Game.cameraX / 64.0);
+        int playerTileX = (int) Math.floor(Game.cameraX / 64.0);
+        int playerTileY = (int) Math.floor(Game.cameraY / 64.0);
 
-        int playerTileY =
-                (int) Math.floor(Game.cameraY / 64.0);
-
-        // Don't calculate a new path if the player
-        // hasn't changed tiles.
-        if (playerTileX == lastTargetX &&
-                playerTileY == lastTargetY) {
-
+        if (playerTileX == lastTargetX && playerTileY == lastTargetY) {
             return;
         }
 
         lastTargetX = playerTileX;
         lastTargetY = playerTileY;
 
-        int monsterTileX =
-                (int) Math.floor(getX() / 64.0);
+        int monsterTileX = (int) Math.floor(getX() / 64.0);
+        int monsterTileY = (int) Math.floor(getY() / 64.0);
 
-        int monsterTileY =
-                (int) Math.floor(getY() / 64.0);
-
-        currentPath =
-                pathfinder.findPath(
-                        monsterTileX,
-                        monsterTileY,
-                        playerTileX,
-                        playerTileY
-                );
-
+        currentPath = pathfinder.findPath(monsterTileX, monsterTileY, playerTileX, playerTileY);
         pathIndex = 0;
 
-        System.out.println(
-                "Monster path: " + currentPath
-        );
+        System.out.println("Monster path: " + currentPath);
     }
 
     @Override
@@ -101,42 +82,22 @@ public class Monster extends LivingEntity{
 
     private void calculatePath() {
 
-        int monsterTileX =
-                (int) Math.floor(getX() / 64.0);
+        int monsterTileX = (int) Math.floor(getX() / 64.0);
+        int monsterTileY = (int) Math.floor(getY() / 64.0);
+        int playerTileX = (int) Math.floor(Game.cameraX / 64.0);
+        int playerTileY = (int) Math.floor(Game.cameraY / 64.0);
 
-        int monsterTileY =
-                (int) Math.floor(getY() / 64.0);
-
-        int playerTileX =
-                (int) Math.floor(Game.cameraX / 64.0);
-
-        int playerTileY =
-                (int) Math.floor(Game.cameraY / 64.0);
-
-        currentPath = pathfinder.findPath(
-                monsterTileX,
-                monsterTileY,
-                playerTileX,
-                playerTileY
-        );
-
+        currentPath = pathfinder.findPath(monsterTileX, monsterTileY, playerTileX, playerTileY);
         pathIndex = 0;
 
-        // The first node is normally the monster's
-        // current tile, so skip it.
-        if (!currentPath.isEmpty() &&
-                currentPath.get(0).x == monsterTileX &&
-                currentPath.get(0).y == monsterTileY) {
-
+        if (!currentPath.isEmpty() && currentPath.get(0).x == monsterTileX && currentPath.get(0).y == monsterTileY) {
             pathIndex = 1;
         }
     }
 
     private void followPath() {
 
-        if (currentPath == null ||
-                currentPath.isEmpty()) {
-
+        if (currentPath == null || currentPath.isEmpty()) {
             return;
         }
 
@@ -144,47 +105,26 @@ public class Monster extends LivingEntity{
             return;
         }
 
-        Point targetTile =
-                currentPath.get(pathIndex);
+        Point targetTile = currentPath.get(pathIndex);
+        double targetX = targetTile.x * 64.0 + 32.0;
+        double targetY = targetTile.y * 64.0 + 32.0;
+        double dx = targetX - getX();
+        double dy = targetY - getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
 
-        double targetX =
-                targetTile.x * 64.0 + 32.0;
-
-        double targetY =
-                targetTile.y * 64.0 + 32.0;
-
-        double dx =
-                targetX - getX();
-
-        double dy =
-                targetY - getY();
-
-        double distance =
-                Math.sqrt(dx * dx + dy * dy);
-
-        // We've reached this tile.
-        if (distance < 2.0) {
-
+        if (distance < 200.0) {
             pathIndex++;
-
+            System.out.println("should despawn");
+            despawn();
             return;
         }
 
-        double directionX =
-                dx / distance;
+        double directionX = dx / distance;
+        double directionY = dy / distance;
+        double speed = speedFactor;
 
-        double directionY =
-                dy / distance;
-
-        double speed = 1.0;
-
-        setX(
-                getX() + directionX * speed
-        );
-
-        setY(
-                getY() + directionY * speed
-        );
+        setX(getX() + directionX * speed);
+        setY(getY() + directionY * speed);
     }
 
 

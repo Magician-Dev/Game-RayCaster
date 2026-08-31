@@ -240,6 +240,16 @@ public class TileMap {
 
 
     public void draw(final Graphics2D g2) {
+        this.LIVING_ENTITIES.forEach(entity -> {
+            if(entity.toRemove == true){
+                this.LIVING_ENTITIES.remove(entity);
+                this.SPRITES.remove(entity);
+
+                entity = null;
+                System.gc();
+            }
+        });
+
         this.ENTITIES.forEach(entity -> entity.draw(g2));
         this.SPRITES.forEach(sprite -> sprite.draw(g2));
     }
