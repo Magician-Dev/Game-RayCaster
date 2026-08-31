@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Game {
     public static int level = 0;
@@ -38,6 +39,8 @@ public class Game {
     public static int precipitationCount = 0;
     public static int lightningRandom = 0;
     public static int lightningRandomCount = 0;
+
+    public static Logger gameLogger;
 
     public Game() {
 
@@ -79,7 +82,7 @@ public class Game {
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();
 
-            switch(level){
+            switch (level) {
                 case 0:
                     x_offset += 0.4;
                     break;
@@ -88,12 +91,14 @@ public class Game {
             }
         });
 
-        renderTimer = new Timer(1000/60, e -> {
+        renderTimer = new Timer(1000 / 60, e -> {
             RAYCASTER_PROJ_PANEL.repaint();
         });
 
         timer.start();
         renderTimer.start();
+
+        gameLogger = Logger.getLogger(Game.class.getName());;
     }
 
     public void stop() {

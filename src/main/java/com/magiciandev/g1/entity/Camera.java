@@ -3,6 +3,7 @@ package com.magiciandev.g1.entity;
 import com.magiciandev.g1.Game;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
+import com.magiciandev.g1.entity.livingentity.LivingEntity;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -36,6 +37,8 @@ public final class Camera {
     public static boolean pressingD = false;
     public static boolean pressingShift = false;
 
+    public static LivingEntity meleeTarget;
+
     public Camera(final RaycasterPanel raycasterPanel, final double x, final double y){
         this.x = x;
         this.y = y;
@@ -60,6 +63,8 @@ public final class Camera {
 
         Game.cameraX = getX();
         Game.cameraY = getY();
+
+        meleeTarget =
     }
 
     public void draw(final Graphics2D g2) {
@@ -185,7 +190,7 @@ public final class Camera {
         @Override
         public void keyPressed(final KeyEvent e) {
             this.PRESSED_KEYS.add(e.getKeyCode());
-            // If they press W and hold the shift key, they sprint. Otherwise, they walk.
+
             if (this.PRESSED_KEYS.contains(KeyEvent.VK_W)) {
                 this.CAMERA.currentState |= CameraState.WALK_FORWARD;
                 if (this.PRESSED_KEYS.contains(KeyEvent.VK_SHIFT)) {
@@ -197,13 +202,13 @@ public final class Camera {
                 }
                 pressingW = true;
             } else if (e.getKeyCode() == KeyEvent.VK_S) {
-                // Walking backwards...
+
                 this.CAMERA.currentState |= CameraState.WALK_BACKWARD;
                 this.CAMERA.speed = -this.CAMERA.DEFAULT_WALK_SPEED;
                 pressingS = true;
             }
 
-            // Turning.
+
             if (e.getKeyCode() == KeyEvent.VK_A) {
                 this.CAMERA.currentState |= CameraState.TURN_LEFT;
                 this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_SPEED);

@@ -30,6 +30,10 @@ public class Monster extends LivingEntity{
     private Pathfinder pathfinder;
     private int pathRecalculationTimer = 0;
 
+    double dxp = Game.cameraX - getX();
+    double dyp = Game.cameraY - getY();
+    double distanceToPlayer = Math.sqrt(dxp * dxp + dyp * dyp);
+
     public Monster(double x, double y, double w, double h, double speedFactor, TileMap tileMap) {
         super(x, y, w, h, "monster.png", speedFactor);
         this.fileName = "monster.png";
@@ -68,16 +72,10 @@ public class Monster extends LivingEntity{
         pathRecalculationTimer++;
 
         if (pathRecalculationTimer >= 10) {
-
             pathRecalculationTimer = 0;
-
             calculatePath();
         }
-
         followPath();
-
-        System.out.println("x: " + this.getX());
-        System.out.println("y: " + this.getY());
     }
 
     private void calculatePath() {
@@ -110,10 +108,7 @@ public class Monster extends LivingEntity{
         double targetY = targetTile.y * 64.0 + 32.0;
         double dx = targetX - getX();
         double dy = targetY - getY();
-        double dxp = Game.cameraX - getX();
-        double dyp = Game.cameraY - getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
-        double distanceToPlayer = Math.sqrt(dxp * dxp + dyp * dyp);
 
         /*if (distanceToPlayer < 64.0) {
             pathIndex++;
