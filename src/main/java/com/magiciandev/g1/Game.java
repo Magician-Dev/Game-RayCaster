@@ -74,7 +74,7 @@ public class Game {
                 entity.tick();
             }
 
-            livingEntities.removeIf(LivingEntity::isToDespawn);
+            tileMap.removeDespawnedEntities();
 
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();

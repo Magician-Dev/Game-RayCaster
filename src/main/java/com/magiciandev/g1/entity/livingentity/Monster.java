@@ -110,12 +110,22 @@ public class Monster extends LivingEntity{
         double targetY = targetTile.y * 64.0 + 32.0;
         double dx = targetX - getX();
         double dy = targetY - getY();
+        double dxp = Game.cameraX - getX();
+        double dyp = Game.cameraY - getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
+        double distanceToPlayer = Math.sqrt(dxp * dxp + dyp * dyp);
 
-        if (distance < 200.0) {
+        /*if (distanceToPlayer < 64.0) {
             pathIndex++;
             System.out.println("should despawn");
             despawn();
+            return;
+        }*/
+
+        if (distance <= speedFactor) {
+            setX(targetX);
+            setY(targetY);
+            pathIndex++;
             return;
         }
 
