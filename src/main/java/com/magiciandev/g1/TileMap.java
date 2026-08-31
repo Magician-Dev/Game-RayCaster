@@ -3,6 +3,7 @@ package com.magiciandev.g1;
 import com.magiciandev.g1.entity.CollidableEntity2D;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.entity.livingentity.Monster;
+import com.magiciandev.g1.entity.livingentity.monsters.Plebb;
 import com.magiciandev.g1.texture.TextureCircleObject2D;
 import com.magiciandev.g1.texture.TextureRectangleObject2D;
 import com.magiciandev.g1.texture.TextureSprite;
@@ -217,11 +218,11 @@ public class TileMap {
 
                         case 'M': {
 
-                            /*Monster monster = new Monster(x, y, TILE_SIZE, TILE_SIZE, 1, this);
-                            this.LIVING_ENTITIES.add(monster);
-                            this.SPRITES.add(monster);
+                            Plebb plebb = new Plebb(x, y, TILE_SIZE, TILE_SIZE, 1, this);
+                            this.LIVING_ENTITIES.add(plebb);
+                            this.SPRITES.add(plebb);
                             System.out.println("ADDED");
-                            break;*/
+                            break;
                         }
                     }
                 }

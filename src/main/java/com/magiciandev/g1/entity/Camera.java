@@ -26,7 +26,8 @@ public final class Camera {
     private final int HEIGHT = 20;
     public final double DEFAULT_WALK_SPEED = 2;
     public final double DEFAULT_RUN_SPEED = 4;
-    public final double DEFAULT_TURN_SPEED = 5;
+    public final double DEFAULT_TURN_SPEED = 1.5;
+    public final double DEFAULT_TURN_RUN_SPEED = 5;
     private double x;
     private double y;
     private double fovDelta;
@@ -334,17 +335,17 @@ public final class Camera {
             if (e.getKeyCode() == KeyEvent.VK_A) {
                 this.CAMERA.currentState |= CameraState.TURN_LEFT;
                 if(CAMERA.isRunning()){
-                    this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_SPEED);
+                    this.CAMERA.setFovDelta(-this.CAMERA.DEFAULT_TURN_RUN_SPEED);
                 }else{
-                    this.CAMERA.setFovDelta(-(this.CAMERA.DEFAULT_TURN_SPEED*0.6));
+                    this.CAMERA.setFovDelta(-(this.CAMERA.DEFAULT_TURN_SPEED));
                 }
                 pressingA = true;
             } else if (e.getKeyCode() == KeyEvent.VK_D) {
                 this.CAMERA.currentState |= CameraState.TURN_RIGHT;
                 if(CAMERA.isRunning()){
-                    this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_SPEED);
+                    this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_RUN_SPEED);
                 }else{
-                    this.CAMERA.setFovDelta((this.CAMERA.DEFAULT_TURN_SPEED*0.6));
+                    this.CAMERA.setFovDelta((this.CAMERA.DEFAULT_TURN_SPEED));
                 }
                 pressingD = true;
             }

@@ -64,7 +64,11 @@ public class ProjectionCamera {
                 SPRITE_Y_SCALE = 2.5f;
                 break;
             }
-            case "pistolidle.png": {
+            case "pistolidle.png":
+            case "pistolshoot0.png":
+            case "pistolshoot1.png":
+            case "pistolshoot2.png":
+            case "pistolshoot3.png": {
                 SPRITE_X_SCALE = 4.0f;
                 SPRITE_Y_SCALE = 2.5f;
                 break;

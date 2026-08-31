@@ -11,6 +11,7 @@ public class Timers {
     public Timer rngTimer;
     public Timer strongLightningTimer;
     public Timer attackCooldownTimer;
+    public Timer animationTimer;
 
     public void start(){
         precipitationTimer = new Timer(1000/4, e -> {
@@ -59,6 +60,12 @@ public class Timers {
             }
         });
 
+        animationTimer = new Timer(1000/8, e -> {
+            if(Game.animationCounter > 0){
+                Game.animationCounter -= 1;
+            }
+        });
+
         if(Game.precipitationLevel == true){
             precipitationTimer.start();
             lightningTimer.start();
@@ -66,6 +73,7 @@ public class Timers {
         }
         rngTimer.start();
         attackCooldownTimer.start();
+        animationTimer.start();
     }
 
     public void stop(){

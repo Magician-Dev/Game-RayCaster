@@ -47,7 +47,8 @@ public class PlayerMethods {
             target.health -= damage;
 
             System.out.println("apply rangedmage: " + damage + " distance: " + distance + " multiplier: " + damageMultiplier);
-            PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MELEE_COOLDOWN;
+            PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_9MM_COOLDOWN;
+            Game.animationCounter = 4;
         }
         return -69420.3313;
     }

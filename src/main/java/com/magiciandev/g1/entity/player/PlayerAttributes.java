@@ -19,6 +19,7 @@ public class PlayerAttributes {
     public static String currentWeapon = weapons[2];
 
     public static final int DEFAULT_MELEE_COOLDOWN = 60;
+    public static final int DEFAULT_9MM_COOLDOWN = 20;
 
     public static void refreshAttackDamage(){
         switch(currentWeapon){
@@ -36,7 +37,20 @@ public class PlayerAttributes {
             case "PISTOL9MM": {
                 meleeDamage = 5;
                 rangedDamage = 40;
-                Game.currentAnimation = "pistolidle.png";
+                if(Game.animationCounter == 4){
+                    Game.currentAnimation = "pistolshoot0.png";
+                }else
+                if(Game.animationCounter == 3){
+                    Game.currentAnimation = "pistolshoot1.png";
+                }else
+                if(Game.animationCounter == 2){
+                    Game.currentAnimation = "pistolshoot2.png";
+                }else
+                if(Game.animationCounter == 1){
+                    Game.currentAnimation = "pistolidle.png";
+                }else{
+                    Game.currentAnimation = "pistolidle.png";
+                }
                 break;
             }
             case "REVOLVER": {
