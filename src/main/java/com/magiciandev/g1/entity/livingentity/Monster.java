@@ -39,6 +39,7 @@ public class Monster extends LivingEntity{
         this.fileName = "monster.png";
         this.TEXTURE = TextureCache.getImage(fileName);
         this.pathfinder = new Pathfinder(tileMap);
+        this.health = 20;
     }
 
     private void updatePathIfNeeded() {
@@ -59,7 +60,7 @@ public class Monster extends LivingEntity{
         currentPath = pathfinder.findPath(monsterTileX, monsterTileY, playerTileX, playerTileY);
         pathIndex = 0;
 
-        System.out.println("Monster path: " + currentPath);
+        //System.out.println("Monster path: " + currentPath);
     }
 
     @Override
@@ -76,6 +77,12 @@ public class Monster extends LivingEntity{
             calculatePath();
         }
         followPath();
+
+        if(health <= 0){
+            despawn();
+        }
+
+        //System.out.println("monster health: " + health);
     }
 
     private void calculatePath() {

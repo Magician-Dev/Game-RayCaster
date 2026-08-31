@@ -4,18 +4,24 @@ import com.magiciandev.g1.entity.livingentity.LivingEntity;
 
 public class PlayerMethods {
 
-    public static boolean playerCanAttack(LivingEntity target, double ttpdistance){
-        if(true){
-            return true;
+    public static boolean playerCanAttack(LivingEntity target){
+        if(target == null){
+            return false;
+        }
+        if(target.health > 0){
+            if(PlayerAttributes.attackCooldown <= 0){
+                return true;
+            }
         }
         return false;
     }
 
-    public static double playerAttack(LivingEntity target, double ttpdistance) {
-        boolean canAttack = playerCanAttack(target, ttpdistance);
-
+    public static double playerAttackMelee(LivingEntity target) {
+        boolean canAttack = playerCanAttack(target);
         if(canAttack){
-
+            target.health -= PlayerAttributes.meleeDamage;
+            System.out.println("APPLIED DAMAGE: " + PlayerAttributes.meleeDamage);
+            PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MELEE_COOLDOWN;
         }
         return -69420.3313;
     }

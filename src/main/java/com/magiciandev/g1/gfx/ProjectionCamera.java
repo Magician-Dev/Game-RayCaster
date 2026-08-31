@@ -20,7 +20,7 @@ public class ProjectionCamera {
     /**
      * Texture (FPS) to render overtop all other objects.
      */
-    private final BufferedImage TEXTURE;
+    private BufferedImage TEXTURE;
 
     private BufferedImage overlayTexture;
 
@@ -38,12 +38,12 @@ public class ProjectionCamera {
     /**
      *
      */
-    private final double SPRITE_X_SCALE = 1.f;
+    private double SPRITE_X_SCALE = 1.0f;
 
     /**
      *
      */
-    private final double SPRITE_Y_SCALE = 2.5f;
+    private double SPRITE_Y_SCALE = 2.5f;
 
     /**
      * Current angle of the lemniscate iteration. Wraps around after 360.
@@ -52,11 +52,31 @@ public class ProjectionCamera {
 
     public ProjectionCamera(final RaycasterProjectionPanel projectionPanel) {
         this.PROJECTION_PANEL = projectionPanel;
-        this.TEXTURE = TextureCache.getImage("fist_1.png");
-        //this.OVERLAY_TEXTURE = TextureCache.getImage("blackblizzardbig.png");
+        this.TEXTURE = TextureCache.getImage(Game.currentAnimation);
     }
 
     public void draw(final Graphics2D g2) {
+        this.TEXTURE = TextureCache.getImage(Game.currentAnimation);
+
+        switch (Game.currentAnimation){
+            case "fist_1.png": {
+                SPRITE_X_SCALE = 1.0f;
+                SPRITE_Y_SCALE = 2.5f;
+                break;
+            }
+            case "pistolidle.png": {
+                SPRITE_X_SCALE = 4.0f;
+                SPRITE_Y_SCALE = 2.5f;
+                break;
+            }
+
+            default: {
+                SPRITE_Y_SCALE = 2.5F;
+                SPRITE_X_SCALE = 1.0F;
+                break;
+            }
+        }
+
         this.oscillationAngle += this.getOscillationSpeed();
         // Convert to the lemniscate coordinates.
         double x = this.OSCILLATION_INTENSITY * RaycasterUtils.cos(Math.toRadians(this.oscillationAngle));

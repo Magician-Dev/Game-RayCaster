@@ -261,7 +261,7 @@ public class TileMap {
     }
 
     public ArrayList<LivingEntity> getLivingEntities(){
-        System.out.println("entities: " + this.LIVING_ENTITIES);
+        //System.out.println("entities: " + this.LIVING_ENTITIES);
         return this.LIVING_ENTITIES;
     }
 }

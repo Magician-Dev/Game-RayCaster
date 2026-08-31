@@ -4,6 +4,8 @@ import com.magiciandev.g1.Game;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
+import com.magiciandev.g1.entity.player.PlayerMethods;
+//import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -31,13 +33,16 @@ public final class Camera {
     private double currentAngle;
     private int currentState;
 
+    private static final double MELEE_RANGE = 100.0;
+    private static final double MELEE_ANGLE = 30.0;
+
     public static boolean pressingW = false;
     public static boolean pressingS = false;
     public static boolean pressingA = false;
     public static boolean pressingD = false;
     public static boolean pressingShift = false;
 
-    public static LivingEntity meleeTarget;
+    public LivingEntity meleeTarget;
 
     public Camera(final RaycasterPanel raycasterPanel, final double x, final double y){
         this.x = x;
@@ -64,7 +69,8 @@ public final class Camera {
         Game.cameraX = getX();
         Game.cameraY = getY();
 
-        meleeTarget =
+        this.meleeTarget = this.findMeleeTarget();
+        //System.out.println("meleetarget: " + meleeTarget);
     }
 
     public void draw(final Graphics2D g2) {
@@ -81,8 +87,58 @@ public final class Camera {
         g2.setTransform(old);
     }
 
+    private LivingEntity findMeleeTarget() {
+
+        LivingEntity closest = null;
+        double closestDistanceSquared = MELEE_RANGE * MELEE_RANGE;
+
+        for (LivingEntity entity : this.RAYCASTER_PANEL.getTileMap().getLivingEntities()) {
+
+            double dx = entity.getX() - this.x;
+            double dy = entity.getY() - this.y;
+
+            double distanceSquared = dx * dx + dy * dy;
+
+            if (distanceSquared > closestDistanceSquared) {
+                continue;
+            }
+
+            double angleToEntity =
+                    Math.toDegrees(Math.atan2(dy, dx));
+
+            if (angleToEntity < 0) {
+                angleToEntity += 360;
+            }
+
+            double angleDifference =
+                    Math.abs(angleToEntity - this.currentAngle);
+
+            if (angleDifference > 180) {
+                angleDifference = 360 - angleDifference;
+            }
+
+            if (angleDifference > MELEE_ANGLE) {
+                continue;
+            }
+
+            closestDistanceSquared = distanceSquared;
+            closest = entity;
+        }
+
+        return closest;
+    }
+
+    public LivingEntity getMeleeTarget() {
+        return this.meleeTarget;
+    }
+
+
     public Rectangle2D.Double getBoundingBox() {
         return new Rectangle2D.Double(this.getX() - 10, this.getY() - 5, this.getWidth() - 10, this.getHeight() - 10);
+    }
+
+    public void attack(LivingEntity meleeTarget){
+        PlayerMethods.playerAttackMelee(meleeTarget);
     }
 
     public int getWidth() {
@@ -182,9 +238,12 @@ public final class Camera {
          */
         private final Set<Integer> PRESSED_KEYS;
 
+        private LivingEntity meleeTarget;
+
         public CameraKeyAdapter(final Camera camera) {
             this.CAMERA = camera;
             this.PRESSED_KEYS = new HashSet<>();
+            meleeTarget = camera.getMeleeTarget();
         }
 
         @Override
@@ -208,6 +267,7 @@ public final class Camera {
                 pressingS = true;
             }
 
+            meleeTarget = CAMERA.getMeleeTarget();
 
             if (e.getKeyCode() == KeyEvent.VK_A) {
                 this.CAMERA.currentState |= CameraState.TURN_LEFT;
@@ -217,6 +277,10 @@ public final class Camera {
                 this.CAMERA.currentState |= CameraState.TURN_RIGHT;
                 this.CAMERA.setFovDelta(this.CAMERA.DEFAULT_TURN_SPEED);
                 pressingD = true;
+            }
+
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                CAMERA.attack(meleeTarget);
             }
         }
 

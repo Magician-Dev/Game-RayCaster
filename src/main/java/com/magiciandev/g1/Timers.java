@@ -1,6 +1,7 @@
 package com.magiciandev.g1;
 
 import com.magiciandev.g1.data.RandomInteger;
+import com.magiciandev.g1.entity.player.PlayerAttributes;
 
 import javax.swing.Timer;
 
@@ -9,6 +10,7 @@ public class Timers {
     public Timer lightningTimer;
     public Timer rngTimer;
     public Timer strongLightningTimer;
+    public Timer attackCooldownTimer;
 
     public void start(){
         precipitationTimer = new Timer(1000/4, e -> {
@@ -51,12 +53,19 @@ public class Timers {
            }
         });
 
+        attackCooldownTimer = new Timer(1000/60, e -> {
+            if(PlayerAttributes.attackCooldown > 0){
+                PlayerAttributes.attackCooldown -= 1;
+            }
+        });
+
         if(Game.precipitationLevel == true){
             precipitationTimer.start();
             lightningTimer.start();
             strongLightningTimer.start();
         }
         rngTimer.start();
+        attackCooldownTimer.start();
     }
 
     public void stop(){

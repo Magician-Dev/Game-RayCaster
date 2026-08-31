@@ -2,6 +2,7 @@ package com.magiciandev.g1;
 
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.entity.livingentity.Monster;
+import com.magiciandev.g1.entity.player.PlayerAttributes;
 import com.magiciandev.g1.gfx.RaycasterProjectionPanel;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ public class Game {
     private final RaycasterPanel RAYCASTER_PANEL;
     private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
     private final TileMap tileMap;
-    private final ArrayList<LivingEntity> livingEntities;
+    public  final ArrayList<LivingEntity> livingEntities;
 
 
     private static Timer timer;
@@ -41,6 +42,9 @@ public class Game {
     public static int lightningRandomCount = 0;
 
     public static Logger gameLogger;
+
+    public static String currentAnimation = "fist_1.png";
+    public static int animationCounter;
 
     public Game() {
 
@@ -89,6 +93,8 @@ public class Game {
                 default:
                     break;
             }
+
+            PlayerAttributes.refreshAttackDamage();
         });
 
         renderTimer = new Timer(1000 / 60, e -> {

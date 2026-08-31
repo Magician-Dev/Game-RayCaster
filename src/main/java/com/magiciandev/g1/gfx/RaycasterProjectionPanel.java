@@ -280,7 +280,7 @@ public class RaycasterProjectionPanel extends JPanel {
                     }
                 }
             }
-            System.out.println("Number of sprites: " + sprites.size());
+            //System.out.println("Number of sprites: " + sprites.size());
         }
 
         this.PROJECTION_SPRITE.draw(g2);

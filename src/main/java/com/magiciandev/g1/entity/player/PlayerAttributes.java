@@ -12,16 +12,20 @@ public class PlayerAttributes {
     public static int armour;
     public static int meleeDamage;
     public static int rangedDamage;
+    public static int attackCooldown;
     public static String weapons[] = {
             "FIST", "KNIFE", "PISTOL9MM", "REVOLVER", "MACHINEGUN", "SNIPERRIFLE"
     };
     public static String currentWeapon = weapons[0];
+
+    public static final int DEFAULT_MELEE_COOLDOWN = 60;
 
     public static void refreshAttackDamage(){
         switch(currentWeapon){
             case "FIST": {
                 meleeDamage = 4;
                 rangedDamage = 0;
+                Game.currentAnimation = "fist_1.png";
                 break;
             }
             case "KNIFE": {
@@ -32,6 +36,7 @@ public class PlayerAttributes {
             case "PISTOL9MM": {
                 meleeDamage = 5;
                 rangedDamage = 40;
+                Game.currentAnimation = "pistolidle.png";
                 break;
             }
             case "REVOLVER": {
@@ -40,11 +45,13 @@ public class PlayerAttributes {
                 break;
             }
             case "MACHINEGUN": {
-                meleeDamage = 80;
+                meleeDamage = 15;
+                rangedDamage = 80;
                 break;
             }
             case "SNIPERRIFLE": {
-                meleeDamage = 1200;
+                rangedDamage = 1200;
+                meleeDamage = 12;
                 break;
             }
             default: {
