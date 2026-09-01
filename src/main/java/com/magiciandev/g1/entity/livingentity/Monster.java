@@ -81,8 +81,6 @@ public abstract class Monster extends LivingEntity{
         if(health <= 0){
             despawn();
         }
-
-        //System.out.println("monster health: " + health);
     }
 
     private void calculatePath() {

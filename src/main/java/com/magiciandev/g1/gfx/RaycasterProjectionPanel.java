@@ -11,6 +11,7 @@ import com.magiciandev.g1.texture.TextureSprite;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 
 public class RaycasterProjectionPanel extends JPanel {
@@ -67,6 +68,8 @@ public class RaycasterProjectionPanel extends JPanel {
      * Floor rendered as the bottom-half of the projection plane.
      */
     private final ProjectionFloor PROJECTION_FLOOR;
+
+    public int aaCounter = 0;
 
     /**
      * Depth of each wall cast out by the rays. Used when rendering sprites.
@@ -228,28 +231,77 @@ public class RaycasterProjectionPanel extends JPanel {
     private void projectSprites(final Graphics2D g2) {
         final int TEXTURE_SIZE = 64;
         final int PROJ_HEIGHT = this.RAYCASTER_PANEL.getPreferredSize().height;
-        final int PROJ_WIDTH = this.RAYCASTER_PANEL.getPreferredSize().width*2;
+        final int PROJ_WIDTH = this.RAYCASTER_PANEL.getPreferredSize().width * 2;
 
         final double FOV = this.getCamera().getFov();
         double CA = this.getCamera().getCurrentAngle();
+
         ArrayList<TextureSprite> sprites = this.RAYCASTER_PANEL.getTileMap().getSprites();
+
+        int[] pixels = this.PROJECTION_SPRITE.getPixels();
+        int imageWidth = this.PROJECTION_SPRITE.getWidth();
+
+
         for (int s = 0; s < sprites.size(); s++) {
             TextureSprite sp = sprites.get(s);
-            double sprite_dir = Math.toDegrees(Math.atan2(sp.getY() - this.getCamera().getY(), sp.getX() - this.getCamera().getX()));
-            double sprite_dist = sp.getDistance();
-            double sprite_screen_size = Math.min(2000, PROJ_HEIGHT*TEXTURE_SIZE / sprite_dist);
 
-            // Fix the angle.
+            double sprite_dir = Math.toDegrees(Math.atan2(sp.getY() - this.getCamera().getY(), sp.getX() - this.getCamera().getX()));
+            double dx = sp.getX() - this.getCamera().getX();
+            double dy = sp.getY() - this.getCamera().getY();
+
+            double sprite_dist = Math.sqrt(dx * dx + dy * dy);
+
+            double sprite_screen_size = Math.min(2000, PROJ_HEIGHT * TEXTURE_SIZE / sprite_dist);
+
+            double angleDifference = sprite_dir - CA;
+
+            while (angleDifference > 180) {
+                angleDifference -= 360;
+            }
+
+            while (angleDifference < -180) {
+                angleDifference += 360;
+            }
+
+            if (Math.abs(angleDifference) > FOV / 2 + 10) {
+                continue;
+            }
+
             while (sprite_dir - CA > 180) sprite_dir -= 360;
             while (sprite_dir - CA < -180) sprite_dir += 360;
 
-            // Project the sprite into the plane.
-            int h_offset = (int) ((sprite_dir - CA) * PROJ_WIDTH / FOV + PROJ_WIDTH / 2 - sprite_screen_size / 2);
+            int h_offset = (int) (angleDifference * PROJ_WIDTH / FOV + PROJ_WIDTH / 2 - sprite_screen_size / 2);
             int v_offset = (int) (PROJ_HEIGHT / 2 - sprite_screen_size / 2);
-            for (int i = 0; i < sprite_screen_size; i++) {
-                int screenX = h_offset + i;
+            int spriteSize = (int) sprite_screen_size;
+            int spriteLeft = h_offset;
+            int spriteRight = h_offset + spriteSize;
+            int spriteTop = v_offset;
+            int spriteBottom = v_offset + spriteSize;
 
-                if (screenX < 0 || screenX >= PROJ_WIDTH) {
+            int startX = Math.max(0, spriteLeft);
+            int endX = Math.min(PROJ_WIDTH, spriteRight);
+            int startY = Math.max(0, spriteTop);
+            int endY = Math.min(PROJ_HEIGHT, spriteBottom);
+
+            if (startX >= endX || startY >= endY) {
+                continue;
+            }
+
+            BufferedImage texture = sp.getTexture();
+
+            int textureWidth = texture.getWidth();
+            int textureHeight = texture.getHeight();
+
+            byte[] textureData = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
+
+            for (int screenX = startX; screenX < endX; screenX++) {
+
+                int spriteX = screenX - spriteLeft;
+
+                int textureX =
+                        spriteX * textureWidth / spriteSize;
+
+                if (textureX < 0 || textureX >= textureWidth) {
                     continue;
                 }
 
@@ -262,29 +314,38 @@ public class RaycasterProjectionPanel extends JPanel {
                 if (this.Z_DEPTH_LIST[zIndex] < sprite_dist) {
                     continue;
                 }
-                for (int j = 0; j < sprite_screen_size; j++) {
-                    if (v_offset + j < 0 || v_offset + j >= PROJ_HEIGHT) { continue; }
-                    //int color = sp.getTexture().getRGB((int) (i * sp.getWidth() / sprite_screen_size), (int) (j * sp.getHeight() / sprite_screen_size));
-                    BufferedImage texture = sp.getTexture();
 
-                    int textureX = (int) (i * texture.getWidth() / sprite_screen_size);
-                    int textureY = (int) (j * texture.getHeight() / sprite_screen_size);
+                for (int screenY = startY; screenY < endY; screenY++) {
 
-                    textureX = Math.min(textureX, texture.getWidth() - 1);
-                    textureY = Math.min(textureY, texture.getHeight() - 1);
+                    int spriteY = screenY - spriteTop;
 
-                    int color = texture.getRGB(textureX, textureY);
+                    int textureY =
+                            spriteY * textureHeight / spriteSize;
 
-                    if (color != ProjectionSprite.TEXTURE_BG_COLOR) {
-                        this.PROJECTION_SPRITE.setPixel(screenX, v_offset + j, color);
+                    if (textureY < 0 || textureY >= textureHeight) {
+                        continue;
+                    }
+
+                    int index =
+                            (textureY * textureWidth + textureX) * 4;
+
+                    int a = textureData[index] & 0xFF;
+                    int b = textureData[index + 1] & 0xFF;
+                    int g = textureData[index + 2] & 0xFF;
+                    int r = textureData[index + 3] & 0xFF;
+
+                    if (a != 0) {
+                        pixels[screenY * imageWidth + screenX] =
+                                (a << 24) |
+                                        (r << 16) |
+                                        (g << 8) |
+                                        b;
                     }
                 }
             }
-            //System.out.println("Number of sprites: " + sprites.size());
+            this.PROJECTION_SPRITE.draw(g2);
+
         }
-
-        this.PROJECTION_SPRITE.draw(g2);
-
     }
 
     public Camera getCamera() {

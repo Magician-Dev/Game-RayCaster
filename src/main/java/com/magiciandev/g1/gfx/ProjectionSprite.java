@@ -2,6 +2,7 @@ package com.magiciandev.g1.gfx;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 
 public class ProjectionSprite {
 
@@ -22,14 +23,28 @@ public class ProjectionSprite {
      */
     private final Graphics2D G2D;
 
+    private final int[] PIXELS;
+
     public ProjectionSprite(final RaycasterProjectionPanel PROJECTION_PANEL) {
         this.PROJECTION_PANEL = PROJECTION_PANEL;
         this.IMAGE = new BufferedImage(PROJECTION_PANEL.getPreferredSize().width, PROJECTION_PANEL.getPreferredSize().height, BufferedImage.TYPE_INT_ARGB);
         this.G2D = this.IMAGE.createGraphics();
+        this.PIXELS = ((DataBufferInt) this.IMAGE.getRaster().getDataBuffer()).getData();
     }
 
-    public void setPixel(double x, double y, int color) {
+    /*public void setPixel(double x, double y, int color) {
         this.IMAGE.setRGB((int) x, (int) y, color);
+    }*/
+    public void setPixel(int x, int y, int color) {
+        this.PIXELS[y * this.IMAGE.getWidth() + x] = color;
+    }
+
+    public int[] getPixels() {
+        return this.PIXELS;
+    }
+
+    public int getWidth() {
+        return this.IMAGE.getWidth();
     }
 
     public void draw(final Graphics2D g2) {
