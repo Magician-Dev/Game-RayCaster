@@ -2,9 +2,12 @@ package com.magiciandev.g1.entity.player;
 
 import com.magiciandev.g1.Game;
 import com.magiciandev.g1.TileMap;
+import com.magiciandev.g1.data.SoundEngine;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 
 public class PlayerMethods {
+
+    static SoundEngine sound = new SoundEngine();
 
     public static boolean playerCanAttack(LivingEntity target){
         if(target == null){
@@ -64,6 +67,35 @@ public class PlayerMethods {
         target.health -= damage;
         System.out.println("APPLIED RANGED DAMAGE: " + damage + " distance: " + distance + " multiplier: " + damageMultiplier);
         PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_9MM_COOLDOWN;
+        switch(PlayerAttributes.currentWeapon){
+            case "PISTOL9MM": {
+                PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_9MM_COOLDOWN;
+                sound.setFile(0);
+                sound.play();
+                break;
+            }
+            case "REVOLVER": {
+                PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_REVOLVER_COOLDOWN;
+                sound.setFile(1);
+                sound.play();
+                break;
+            }
+            case "SNIPERRIFLE": {
+                PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_SNIPERRIFLE_COOLDOWN;
+                sound.setFile(3);
+                sound.play();
+                break;
+            }
+            case "MACHINEGUN": {
+                PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN;
+                sound.setFile(0);
+                sound.play();
+                break;
+            }
+            default: {
+                break;
+            }
+        }
         Game.animationCounter = 4;
         return -69420.3313;
     }

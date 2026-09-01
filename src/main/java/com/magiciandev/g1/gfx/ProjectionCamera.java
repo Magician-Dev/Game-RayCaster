@@ -83,6 +83,36 @@ public class ProjectionCamera {
                 break;
             }
 
+            case "revolveridle.png":
+            case "revolvershoot0.png":
+            case "revolvershoot1.png":
+            case "revolvershoot2.png": {
+                SPRITE_X_SCALE = 2.3f;
+                SPRITE_Y_SCALE = 1.8f;
+                break;
+            }
+
+            case "chaingunidle0.png":
+            case "chaingunidle1.png":
+            case "chaingunidle2.png":
+            case "chaingunidle3.png":
+            case "chaingunshoot0.png":
+            case "chaingunshoot1.png":
+            case "chaingunshoot3.png":
+            case "chaingunshoot4.png":
+            case "chaingunshoot5.png":{
+                SPRITE_X_SCALE = 2.3f;
+                SPRITE_Y_SCALE = 2.5f;
+                break;
+            }
+
+            case "rifleshoot.png":
+            case "rifleidle.png": {
+                SPRITE_X_SCALE = 2.f;
+                SPRITE_Y_SCALE = 1.5f;
+                break;
+            }
+
             default: {
                 SPRITE_Y_SCALE = 2.5F;
                 SPRITE_X_SCALE = 1.0F;

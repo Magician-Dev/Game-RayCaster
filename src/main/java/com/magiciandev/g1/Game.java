@@ -45,6 +45,7 @@ public class Game {
 
     public static String currentAnimation = "fist_1.png";
     public static int animationCounter;
+    public static int idleCounter;
 
     public Game() {
 

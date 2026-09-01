@@ -64,6 +64,14 @@ public class Timers {
             if(Game.animationCounter > 0){
                 Game.animationCounter -= 1;
             }
+            if(Game.idleCounter > 0){
+                Game.idleCounter -= 1;
+            }else
+            if(Game.idleCounter == 0){
+                Game.idleCounter = 4;
+            }else{
+                Game.idleCounter = 0;
+            }
         });
 
         if(Game.precipitationLevel == true){
