@@ -3,6 +3,7 @@ package com.magiciandev.g1.entity;
 import com.magiciandev.g1.Game;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
+import com.magiciandev.g1.TileMap;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.entity.player.PlayerAttributes;
 import com.magiciandev.g1.entity.player.PlayerMethods;
@@ -20,7 +21,7 @@ import java.util.Set;
 public final class Camera {
     private final KeyAdapter KEY_ADAPTER;
     private final double FOV = 70;
-    private final RaycasterPanel RAYCASTER_PANEL;
+    public final RaycasterPanel RAYCASTER_PANEL;
     private final double DISTANCE_TO_PROJECTION_PLANE;
     private final int WIDTH = 20;
     private final int HEIGHT = 20;
@@ -197,8 +198,8 @@ public final class Camera {
         PlayerMethods.playerAttackMelee(meleeTarget);
     }
 
-    public void attackRanged(LivingEntity rangedTarget){
-        PlayerMethods.playerAttackRanged(rangedTarget);
+    public void attackRanged(LivingEntity rangedTarget, TileMap tileMap){
+        PlayerMethods.playerAttackRanged(rangedTarget, tileMap);
     }
 
     public int getWidth() {
@@ -275,9 +276,9 @@ public final class Camera {
                 || CameraState.isFlagEnabled(this.currentState, CameraState.TURN_RIGHT);
     }
 
-    public void attemptAttack(LivingEntity meleeTarget, LivingEntity rangedTarget) {
+    public void attemptAttack(LivingEntity meleeTarget, LivingEntity rangedTarget, TileMap tileMap) {
         if (PlayerAttributes.rangedDamage > 0 && rangedTarget != null) {
-            attackRanged(rangedTarget);
+            attackRanged(rangedTarget, tileMap);
         } else if (meleeTarget != null) {
             attackMelee(meleeTarget);
         }
@@ -351,7 +352,7 @@ public final class Camera {
             }
 
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                CAMERA.attemptAttack(CAMERA.getMeleeTarget(), CAMERA.getRangedTarget());
+                CAMERA.attemptAttack(CAMERA.getMeleeTarget(), CAMERA.getRangedTarget(), CAMERA.RAYCASTER_PANEL.getTileMap());
             }
         }
 

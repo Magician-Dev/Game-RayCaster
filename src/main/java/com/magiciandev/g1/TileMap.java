@@ -9,6 +9,7 @@ import com.magiciandev.g1.texture.TextureRectangleObject2D;
 import com.magiciandev.g1.texture.TextureSprite;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -244,6 +245,24 @@ public class TileMap {
                 sprite instanceof LivingEntity
                         && ((LivingEntity) sprite).isToDespawn()
         );
+    }
+
+    public boolean hasLineOfSight(
+            double startX,
+            double startY,
+            double targetX,
+            double targetY
+    ) {
+        Line2D.Double shotLine =
+                new Line2D.Double(startX, startY, targetX, targetY);
+
+        for (CollidableEntity2D wall : ENTITIES) {
+            if (wall.getBoundingBox().intersectsLine(shotLine)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void draw(final Graphics2D g2) {
