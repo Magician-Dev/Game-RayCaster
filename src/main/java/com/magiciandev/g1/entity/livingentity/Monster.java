@@ -34,9 +34,9 @@ public abstract class Monster extends LivingEntity{
     double dyp = Game.cameraY - getY();
     double distanceToPlayer = Math.sqrt(dxp * dxp + dyp * dyp);
 
-    public Monster(double x, double y, double w, double h, double speedFactor, TileMap tileMap) {
-        super(x, y, w, h, "monster.png", speedFactor);
-        this.fileName = "monster.png";
+    public Monster(double x, double y, double w, double h, double speedFactor, String fileName, TileMap tileMap) {
+        super(x, y, w, h, fileName, speedFactor);
+        this.fileName = fileName;
         this.TEXTURE = TextureCache.getImage(fileName);
         this.pathfinder = new Pathfinder(tileMap);
         this.health = 20;

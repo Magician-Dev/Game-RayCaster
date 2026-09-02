@@ -41,13 +41,15 @@ public final class Camera {
     private static final double MELEE_RANGE = 100.0;
     private static final double MELEE_ANGLE = 30.0;
     private static final double RANGED_RANGE = 12300.0;
-    private static final double RANGED_ANGLE = 15.0;
+    private static double RANGED_ANGLE = 15.0;
 
     public static boolean pressingW = false;
     public static boolean pressingS = false;
     public static boolean pressingA = false;
     public static boolean pressingD = false;
     public static boolean pressingShift = false;
+
+    public static boolean pressingSpace = false;
 
     public LivingEntity meleeTarget;
     public LivingEntity rangedTarget;
@@ -89,7 +91,15 @@ public final class Camera {
             distanceToMeleeTarget = Double.MAX_VALUE;
         }
 
-        //System.out.println("meleetarget: " + meleeTarget);
+        if(pressingSpace && PlayerAttributes.currentWeapon.equals("MACHINEGUN")){
+            attemptAttack(meleeTarget, rangedTarget, RAYCASTER_PANEL.getTileMap());
+        }
+
+        if(PlayerAttributes.currentWeapon.equals("MACHINEGUN")){
+            RANGED_ANGLE = 4;
+        }else{
+            RANGED_ANGLE = 15;
+        }
     }
 
     public void draw(final Graphics2D g2) {
@@ -353,6 +363,7 @@ public final class Camera {
 
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                 CAMERA.attemptAttack(CAMERA.getMeleeTarget(), CAMERA.getRangedTarget(), CAMERA.RAYCASTER_PANEL.getTileMap());
+                pressingSpace = true;
             }
         }
 
@@ -382,6 +393,10 @@ public final class Camera {
                 this.CAMERA.currentState &= ~(CameraState.TURN_LEFT | CameraState.TURN_RIGHT);
                 pressingA = false;
                 pressingD = false;
+            }
+
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                pressingSpace = false;
             }
         }
     }

@@ -55,6 +55,11 @@ public final class RaycasterPanel extends JPanel {
         this.CAMERA.update();
         this.updateCollisions(oldX, oldY);
 
+        /*this.updateSpriteDistances();
+        this.computeRays();*/
+    }
+
+    public void updateRender(){
         this.updateSpriteDistances();
         this.computeRays();
     }

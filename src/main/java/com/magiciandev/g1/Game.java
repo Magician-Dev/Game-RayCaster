@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 public class Game {
@@ -45,7 +48,16 @@ public class Game {
 
     public static String currentAnimation = "fist_1.png";
     public static int animationCounter;
-    public static int idleCounter;
+    public static int idleCounter = 1;
+    public static int mgAttackCounter;
+    public static boolean shouldDrawRecoil = false;
+    private final ExecutorService renderExecutor = Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "Render-Thread");
+                t.setDaemon(true);
+                return t;
+    });
+
+    private final AtomicBoolean rendering = new AtomicBoolean(false);
 
     public Game() {
 
@@ -95,11 +107,31 @@ public class Game {
                     break;
             }
 
+            if((PlayerAttributes.currentWeapon.equals("MACHINEGUN") && animationCounter > 0) ||
+                    (PlayerAttributes.currentWeapon.equals("SNIPERRIFLE") && animationCounter > 0)){
+                shouldDrawRecoil = true;
+            }else{
+                shouldDrawRecoil = false;
+            }
+
             PlayerAttributes.refreshAttackDamage();
         });
 
         renderTimer = new Timer(1000 / 60, e -> {
-            RAYCASTER_PROJ_PANEL.repaint();
+            if (!rendering.compareAndSet(false, true)) {
+                return;
+            }
+
+            renderExecutor.submit(() -> {
+                try {
+                    RAYCASTER_PANEL.updateRender();
+                    RAYCASTER_PROJ_PANEL.repaint();
+                    RAYCASTER_PROJ_PANEL.render();
+                } finally {
+                    rendering.set(false);
+                }
+            });
+            //RAYCASTER_PROJ_PANEL.repaint();
         });
 
         timer.start();

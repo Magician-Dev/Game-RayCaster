@@ -5,7 +5,6 @@ import com.magiciandev.g1.Ray;
 import com.magiciandev.g1.RaycasterPanel;
 import com.magiciandev.g1.RaycasterUtils;
 import com.magiciandev.g1.entity.Camera;
-import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.texture.TextureSprite;
 
 import javax.swing.*;
@@ -69,6 +68,9 @@ public class RaycasterProjectionPanel extends JPanel {
      */
     private final ProjectionFloor PROJECTION_FLOOR;
 
+    private volatile BufferedImage frontBuffer;
+    private BufferedImage backBuffer;
+
     public int aaCounter = 0;
 
     /**
@@ -90,6 +92,19 @@ public class RaycasterProjectionPanel extends JPanel {
         this.PROJECTION_CEILING.setTexturedCeiling(true);
         this.PROJECTION_FLOOR.setTexturedFloor(true);
         this.Z_DEPTH_LIST = new double[this.RAYCASTER_PANEL.getResolution()];
+
+        frontBuffer = new BufferedImage(
+                Game.WIDTH,
+                Game.HEIGHT,
+                BufferedImage.TYPE_INT_RGB
+        );
+
+        backBuffer = new BufferedImage(
+                Game.WIDTH,
+                Game.HEIGHT,
+                BufferedImage.TYPE_INT_RGB
+        );
+
     }
 
     public void update() {
@@ -99,7 +114,13 @@ public class RaycasterProjectionPanel extends JPanel {
     public void paintComponent(final Graphics g) {
         super.paintComponent(g);
 
-        Graphics2D g2d = (Graphics2D) g;
+        BufferedImage frame = frontBuffer;
+
+        if (frame != null) {
+            g.drawImage(frame, 0, 0, getWidth(), getHeight(), null);
+        }
+
+        /*Graphics2D g2d = (Graphics2D) g;
 
         g2d.setColor(Color.BLACK);
         g2d.fillRect(
@@ -117,13 +138,49 @@ public class RaycasterProjectionPanel extends JPanel {
         this.project(g2d);
         this.projectSprites(g2d);
 
-        this.PROJECTION_CAMERA.draw(g2d);
+        this.PROJECTION_CAMERA.draw(g2d);*/
+    }
+
+    public void render(){
+        Graphics2D g = backBuffer.createGraphics();
+
+        try {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, backBuffer.getWidth(), backBuffer.getHeight());
+
+            Graphics2D g2d = (Graphics2D) g;
+
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(
+                    0,
+                    0,
+                    this.getWidth(),
+                    this.getHeight()
+            );
+
+
+
+            this.PROJECTION_CEILING.draw(g2d);
+            this.PROJECTION_FLOOR.draw(g2d);
+
+            this.project(g2d);
+            this.projectSprites(g2d);
+
+            this.PROJECTION_CAMERA.draw(g2d);
+        } finally {
+            g.dispose();
+        }
+
+        BufferedImage oldFront = frontBuffer;
+        frontBuffer = backBuffer;
+        backBuffer = oldFront;
     }
 
 
     /**
      * @param g2
      */
+
     private void project(final Graphics2D g2) {
         Ray[] rayList = this.RAYCASTER_PANEL.getRayList();
         for (int i = 0; i < rayList.length; i++) {

@@ -127,9 +127,12 @@ public class ProjectionCamera {
         double w = this.PROJECTION_PANEL.getPreferredSize().width / this.SPRITE_X_SCALE;
         double h = this.PROJECTION_PANEL.getPreferredSize().height / this.SPRITE_Y_SCALE;
         int cx = (int) (this.PROJECTION_PANEL.getPreferredSize().width / 2.f - w / 2.f);
-        g2.drawImage(this.TEXTURE, (int) (x + cx),
-                this.OSCILLATION_Y_OFFSET + (int) (y + this.PROJECTION_PANEL.getPreferredSize().height - h),
-                (int) w, (int) h, null);
+
+        if(!Game.shouldDrawRecoil) {
+            g2.drawImage(this.TEXTURE, (int) (x + cx), this.OSCILLATION_Y_OFFSET + (int) (y + this.PROJECTION_PANEL.getPreferredSize().height - h), (int) w, (int) h, null);
+        }else{
+            g2.drawImage(this.TEXTURE, (int) (x + cx), 30 + (int) (y + this.PROJECTION_PANEL.getPreferredSize().height - h), (int) w, (int) h, null);
+        }
 
         switch(Game.precipitationCount){
             case 1:

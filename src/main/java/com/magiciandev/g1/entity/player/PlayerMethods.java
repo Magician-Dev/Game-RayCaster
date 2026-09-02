@@ -88,6 +88,11 @@ public class PlayerMethods {
             }
             case "MACHINEGUN": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN;
+                PlayerAttributes.machineGunShotsFired++;
+                if(PlayerAttributes.machineGunShotsFired > 60){
+                    PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN*100;
+                    PlayerAttributes.machineGunShotsFired = 0;
+                }
                 sound.setFile(0);
                 sound.play();
                 break;

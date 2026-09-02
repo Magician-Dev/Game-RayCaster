@@ -58,19 +58,38 @@ public class Timers {
             if(PlayerAttributes.attackCooldown > 0){
                 PlayerAttributes.attackCooldown -= 1;
             }
+            if(PlayerAttributes.currentWeapon.equals("MACHINEGUN") && PlayerAttributes.attackCooldown > PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN){
+                PlayerAttributes.machineGunOnCooldown = true;
+            }else{
+                PlayerAttributes.machineGunOnCooldown = false;
+            }
         });
 
         animationTimer = new Timer(1000/8, e -> {
             if(Game.animationCounter > 0){
                 Game.animationCounter -= 1;
             }
-            if(Game.idleCounter > 0){
-                Game.idleCounter -= 1;
-            }else
-            if(Game.idleCounter == 0){
-                Game.idleCounter = 4;
+
+            if(Game.mgAttackCounter > 0){
+                Game.mgAttackCounter -= 1;
             }else{
-                Game.idleCounter = 0;
+                Game.mgAttackCounter = 4;
+            }
+
+            if(!PlayerAttributes.machineGunOnCooldown) {
+                if (Game.idleCounter > 0) {
+                    Game.idleCounter -= 1;
+                } else if (Game.idleCounter == 0) {
+                    Game.idleCounter = 4;
+                } else {
+                    Game.idleCounter = 0;
+                }
+            }else
+            if(PlayerAttributes.machineGunOnCooldown){
+                Game.animationCounter = 0;
+            }
+            if(Game.idleCounter < 0 || Game.idleCounter != 0){
+                Game.idleCounter = 1;
             }
         });
 

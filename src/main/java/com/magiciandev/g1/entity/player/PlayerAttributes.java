@@ -14,6 +14,8 @@ public class PlayerAttributes {
     public static int rangedDamage;
     public static int attackCooldown;
     public static int rangedCooldown;
+    public static int machineGunShotsFired = 0;
+    public static boolean machineGunOnCooldown = false;
     public static String weapons[] = {
             "FIST", "KNIFE", "PISTOL9MM", "REVOLVER", "MACHINEGUN", "SNIPERRIFLE"
     };
@@ -94,33 +96,60 @@ public class PlayerAttributes {
             case "MACHINEGUN": {
                 meleeDamage = 15;
                 rangedDamage = 80;
-                if(Game.animationCounter == 4){
-                    Game.currentAnimation = "chaingunshoot0.png";
-                }else
-                if(Game.animationCounter == 3){
-                    Game.currentAnimation = "chaingunshoot1.png";
-                }else
-                if(Game.animationCounter == 2){
-                    Game.currentAnimation = "chaingunshoot3.png";
-                }else
-                if(Game.animationCounter == 1){
-                    Game.currentAnimation = "chaingunshoot4.png";
-                }else{
-                    if(Game.idleCounter == 4){
-                        Game.currentAnimation = "chaingunidle0.png";
-                    }else
-                    if(Game.idleCounter == 3){
-                        Game.currentAnimation = "chaingunidle1.png";
-                    }else
-                    if(Game.idleCounter == 2){
-                        Game.currentAnimation = "chaingunidle2.png";
-                    }else
-                    if(Game.idleCounter == 1){
-                        Game.currentAnimation = "chaingunidle3.png";
-                    }else{
-                        Game.currentAnimation = "chaingunidle0.png";
+                if(Game.animationCounter > 0){
+                    switch(Game.mgAttackCounter){
+                        case 0: {
+                            Game.currentAnimation = "chaingunshoot0.png";
+                            break;
+                        }
+                        case 1: {
+                            Game.currentAnimation = "chaingunshoot1.png";
+                            break;
+                        }
+                        case 2: {
+                            Game.currentAnimation = "chaingunshoot3.png";
+                            break;
+                        }
+                        case 3: {
+                            Game.currentAnimation = "chaingunshoot4.png";
+                            break;
+                        }
+                        case 4: {
+                            Game.currentAnimation = "chaingunshoot5.png";
+                            break;
+                        }
                     }
-                }
+                }else
+                    if(attackCooldown > DEFAULT_MACHINEGUN_COOLDOWN) {
+                        if (Game.animationCounter == 1) {
+                            Game.currentAnimation = "chaingunshoot4.png";
+                        } else {
+                            if (Game.idleCounter == 4) {
+                                Game.currentAnimation = "chaingunidle0.png";
+                            } else if (Game.idleCounter == 3) {
+                                Game.currentAnimation = "chaingunidle1.png";
+                            } else if (Game.idleCounter == 2) {
+                                Game.currentAnimation = "chaingunidle2.png";
+                            } else if (Game.idleCounter == 1) {
+                                Game.currentAnimation = "chaingunidle3.png";
+                            } else {
+                                Game.idleCounter = 4;
+                            }
+                        }
+                    }else{
+                        if (Game.idleCounter == 4) {
+                            Game.currentAnimation = "chaingunidle0.png";
+                        } else if (Game.idleCounter == 3) {
+                            Game.currentAnimation = "chaingunidle1.png";
+                        } else if (Game.idleCounter == 2) {
+                            Game.currentAnimation = "chaingunidle2.png";
+                        } else if (Game.idleCounter == 1) {
+                            Game.currentAnimation = "chaingunidle3.png";
+                        } else {
+                            Game.idleCounter = 4;
+                            Game.currentAnimation = "chaingunidle0.png";
+                        }
+                    }
                 break;
             }
             case "SNIPERRIFLE": {
