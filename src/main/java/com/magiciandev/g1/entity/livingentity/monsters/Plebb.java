@@ -14,7 +14,7 @@ public class Plebb extends Monster {
         super(x, y, w, h, speedFactor, "monster.png", tileMap, true, true, 50);
         this.fileName = "monster.png";
         this.TEXTURE = TextureCache.getImage(fileName);
-        this.health = 50;
+        this.health = 10000;
     }
 
     @Override

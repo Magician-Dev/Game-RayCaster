@@ -70,20 +70,20 @@ public class PlayerMethods {
         switch(PlayerAttributes.currentWeapon){
             case "PISTOL9MM": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_9MM_COOLDOWN;
-                sound.setFile(0);
-                sound.play();
+                //sound.setFile(0);
+                sound.play(0);
                 break;
             }
             case "REVOLVER": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_REVOLVER_COOLDOWN;
-                sound.setFile(1);
-                sound.play();
+                //sound.setFile(1);
+                sound.play(1);
                 break;
             }
             case "SNIPERRIFLE": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_SNIPERRIFLE_COOLDOWN;
-                sound.setFile(3);
-                sound.play();
+                //sound.setFile(3);
+                sound.play(3);
                 break;
             }
             case "MACHINEGUN": {
@@ -93,8 +93,8 @@ public class PlayerMethods {
                     PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN*100;
                     PlayerAttributes.machineGunShotsFired = 0;
                 }
-                sound.setFile(0);
-                sound.play();
+                //sound.setFile(0);
+                sound.play(0);
                 break;
             }
             default: {
