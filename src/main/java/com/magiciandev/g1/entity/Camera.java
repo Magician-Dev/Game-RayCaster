@@ -29,8 +29,8 @@ public final class Camera {
     public final double DEFAULT_RUN_SPEED = 4;
     public final double DEFAULT_TURN_SPEED = 1.5;
     public final double DEFAULT_TURN_RUN_SPEED = 5;
-    private double x;
-    private double y;
+    public double x;
+    public double y;
     private double fovDelta;
     public double speed;
     private double currentAngle;

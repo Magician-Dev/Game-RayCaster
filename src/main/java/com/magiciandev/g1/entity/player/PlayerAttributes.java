@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PlayerAttributes {
-    public static int health;
+    public static int health = 100;
     public static int armour;
     public static int meleeDamage;
     public static int rangedDamage;
@@ -19,7 +19,7 @@ public class PlayerAttributes {
     public static String weapons[] = {
             "FIST", "KNIFE", "PISTOL9MM", "REVOLVER", "MACHINEGUN", "SNIPERRIFLE"
     };
-    public static String currentWeapon = weapons[4];
+    public static String currentWeapon = weapons[5];
 
     public static final int DEFAULT_MELEE_COOLDOWN = 60;
     public static final int DEFAULT_9MM_COOLDOWN = 20;

@@ -11,10 +11,10 @@ public class Plebb extends Monster {
     private BufferedImage TEXTURE;
 
     public Plebb(double x, double y, double w, double h, double speedFactor, TileMap tileMap) {
-        super(x, y, w, h, speedFactor, "plebb0.png", tileMap);
-        this.fileName = "plebb0.png";
+        super(x, y, w, h, speedFactor, "monster.png", tileMap, true, true, 50);
+        this.fileName = "monster.png";
         this.TEXTURE = TextureCache.getImage(fileName);
-        this.health = 3000;
+        this.health = 50;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.magiciandev.g1;
 
+import com.magiciandev.g1.entity.Camera;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.entity.livingentity.Monster;
 import com.magiciandev.g1.entity.player.PlayerAttributes;
@@ -115,6 +116,10 @@ public class Game {
             }
 
             PlayerAttributes.refreshAttackDamage();
+
+            if(PlayerAttributes.health <= 0){
+
+            }
         });
 
         renderTimer = new Timer(1000 / 60, e -> {

@@ -32,7 +32,7 @@ public class Timers {
         });
 
         lightningTimer = new Timer(1000/2, e -> {
-            Game.lightningRandom = RandomInteger.randomIndex;
+            Game.lightningRandom = RandomInteger.psrandomInt();
 
             if(Game.lightningRandom == 3){
                 Game.lightning = true;
