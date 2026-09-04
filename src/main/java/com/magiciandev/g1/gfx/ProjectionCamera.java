@@ -23,6 +23,7 @@ public class ProjectionCamera {
     private BufferedImage TEXTURE;
 
     private BufferedImage overlayTexture;
+    private BufferedImage precipitationTexture;
 
     /**
      * Offset from the top of the image to prevent the image from being fully exposed
@@ -136,23 +137,35 @@ public class ProjectionCamera {
 
         switch(Game.precipitationCount){
             case 1:
-                overlayTexture = TextureCache.getImage("blackblizzardbig.png");
+                precipitationTexture = TextureCache.getImage("blackblizzardbig.png");
                 break;
             case 2:
-                overlayTexture = TextureCache.getImage("blackblizzardbig1.png");
+                precipitationTexture = TextureCache.getImage("blackblizzardbig1.png");
                 break;
             case 3:
-                overlayTexture = TextureCache.getImage("blackblizzardbig2.png");
+                precipitationTexture = TextureCache.getImage("blackblizzardbig2.png");
                 break;
             case 4:
-                overlayTexture = TextureCache.getImage("blackblizzardbig3.png");
+                precipitationTexture = TextureCache.getImage("blackblizzardbig3.png");
                 break;
             default:
-                overlayTexture = null;
+                precipitationTexture = null;
                 break;
+        }
+        if(Game.ticksSinceHurt < 60){
+            if(Game.strongAttack) {
+                overlayTexture = TextureCache.getImage("hurtoverlay.png");
+            }else{
+                overlayTexture = TextureCache.getImage("hurtoverlaysoft.png");
+            }
+        }else{
+            overlayTexture = null;
         }
 
         //draw screen overlay (overlays should be passed in as 320x240 sprites)
+        if(precipitationTexture != null){
+            g2.drawImage(precipitationTexture, 0, 0, 640, 480, null);
+        }
         if(overlayTexture != null){
             g2.drawImage(overlayTexture, 0, 0, 640, 480, null);
         }

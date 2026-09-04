@@ -1,5 +1,6 @@
 package com.magiciandev.g1;
 
+import com.magiciandev.g1.data.SoundEngine;
 import com.magiciandev.g1.entity.Camera;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 import com.magiciandev.g1.entity.livingentity.Monster;
@@ -23,41 +24,36 @@ public class Game {
     public static boolean strongLightning = false;
     public static double x_offset = 0;
     public static double y_offset = 0;
-
     public static final int WIDTH = 640;
     public static final int HEIGHT = 480;
-
+    public static int ticksSinceHurt = 61;
+    public static boolean strongAttack = false;
+    public static boolean criticalAttack;
     private final JFrame frame;
-
     private final RaycasterPanel RAYCASTER_PANEL;
     private final RaycasterProjectionPanel RAYCASTER_PROJ_PANEL;
     private final TileMap tileMap;
     public  final ArrayList<LivingEntity> livingEntities;
-
-
     private static Timer timer;
     public static Timer renderTimer;
-
     public static double cameraX;
     public static double cameraY;
-
     public static int precipitationCount = 0;
     public static int lightningRandom = 0;
     public static int lightningRandomCount = 0;
-
     public static Logger gameLogger;
-
     public static String currentAnimation = "fist_1.png";
     public static int animationCounter;
     public static int idleCounter = 1;
     public static int mgAttackCounter;
+    public static int healthLastTick = 100;
     public static boolean shouldDrawRecoil = false;
     private final ExecutorService renderExecutor = Executors.newSingleThreadExecutor(r -> {
                 Thread t = new Thread(r, "Render-Thread");
                 t.setDaemon(true);
                 return t;
     });
-
+    public static SoundEngine soundEngine = new SoundEngine();
     private final AtomicBoolean rendering = new AtomicBoolean(false);
 
     public Game() {
@@ -88,18 +84,13 @@ public class Game {
     }
 
     public void start() {
-
         timer = new Timer(1000 / 60, e -> {
-
             for (LivingEntity entity : livingEntities) {
                 entity.tick();
             }
-
             tileMap.removeDespawnedEntities();
-
             RAYCASTER_PANEL.update();
             RAYCASTER_PROJ_PANEL.update();
-
             switch (level) {
                 case 0:
                     x_offset += 0.4;
@@ -107,19 +98,28 @@ public class Game {
                 default:
                     break;
             }
-
             if((PlayerAttributes.currentWeapon.equals("MACHINEGUN") && animationCounter > 0) ||
                     (PlayerAttributes.currentWeapon.equals("SNIPERRIFLE") && animationCounter > 0)){
                 shouldDrawRecoil = true;
             }else{
                 shouldDrawRecoil = false;
             }
-
             PlayerAttributes.refreshAttackDamage();
-
             if(PlayerAttributes.health <= 0){
 
             }
+            if(healthLastTick != PlayerAttributes.health){
+                ticksSinceHurt = 0;
+                if(healthLastTick > PlayerAttributes.health+30){
+                    strongAttack = true;
+                }
+            }else{
+                ticksSinceHurt++;
+            }
+            if(ticksSinceHurt > 60){
+                strongAttack = false;
+            }
+            healthLastTick = PlayerAttributes.health;
         });
 
         renderTimer = new Timer(1000 / 60, e -> {

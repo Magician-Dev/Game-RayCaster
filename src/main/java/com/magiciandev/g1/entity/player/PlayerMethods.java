@@ -5,9 +5,16 @@ import com.magiciandev.g1.TileMap;
 import com.magiciandev.g1.data.SoundEngine;
 import com.magiciandev.g1.entity.livingentity.LivingEntity;
 
+import javax.sound.sampled.Clip;
+
 public class PlayerMethods {
 
-    static SoundEngine sound = new SoundEngine();
+    private static SoundEngine sound() {
+        return Game.soundEngine;
+    }
+
+    private static final Clip[] machineGunClips = new Clip[5];
+    private static int machineGunIndex = 0;
 
     public static boolean playerCanAttack(LivingEntity target){
         if(target == null){
@@ -70,31 +77,27 @@ public class PlayerMethods {
         switch(PlayerAttributes.currentWeapon){
             case "PISTOL9MM": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_9MM_COOLDOWN;
-                //sound.setFile(0);
-                sound.play(0);
+                sound().play(0);
                 break;
             }
             case "REVOLVER": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_REVOLVER_COOLDOWN;
-                //sound.setFile(1);
-                sound.play(1);
+                sound().play(1);
                 break;
             }
             case "SNIPERRIFLE": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_SNIPERRIFLE_COOLDOWN;
-                //sound.setFile(3);
-                sound.play(3);
+                sound().play(3);
                 break;
             }
             case "MACHINEGUN": {
                 PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN;
                 PlayerAttributes.machineGunShotsFired++;
-                if(PlayerAttributes.machineGunShotsFired > 60){
-                    PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN*100;
+                if (PlayerAttributes.machineGunShotsFired > 60) {
+                    PlayerAttributes.attackCooldown = PlayerAttributes.DEFAULT_MACHINEGUN_COOLDOWN * 100;
                     PlayerAttributes.machineGunShotsFired = 0;
                 }
-                //sound.setFile(0);
-                sound.play(0);
+                sound().play(0);
                 break;
             }
             default: {
@@ -103,5 +106,23 @@ public class PlayerMethods {
         }
         Game.animationCounter = 4;
         return -69420.3313;
+    }
+
+    public static void playMachineGun() {
+
+        Clip clip = machineGunClips[machineGunIndex];
+
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+
+        clip.setFramePosition(0);
+        clip.start();
+
+        machineGunIndex++;
+
+        if (machineGunIndex >= machineGunClips.length) {
+            machineGunIndex = 0;
+        }
     }
 }
